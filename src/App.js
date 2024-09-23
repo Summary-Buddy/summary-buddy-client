@@ -7,8 +7,6 @@ import Header from './pages/Header';
 
 function App() {
   return (
-    // <div className="aheader">
-      // <Header></Header>
     <div className="app">
       <Header></Header>      
       <Routes>
@@ -18,7 +16,6 @@ function App() {
         <Route path="/Record" element={<RecordPage/>} />    
       </Routes>
     </div>
-    // </div>
   );
 }
 
