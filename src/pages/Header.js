@@ -6,7 +6,7 @@ export default function Header() {
     return (
         <BootstrapNavbar expand="lg" className="navbar-custom">
             <Container fluid>
-                <BootstrapNavbar.Brand href="#">Summary Buddy</BootstrapNavbar.Brand>
+                <BootstrapNavbar.Brand as={Link} to="/">Summary Buddy</BootstrapNavbar.Brand>
                 <BootstrapNavbar.Toggle aria-controls="navbarScroll" />
                 <BootstrapNavbar.Collapse id="navbarScroll">
                     <Nav
