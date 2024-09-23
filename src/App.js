@@ -1,22 +1,25 @@
-import './App.css';
-import { Route, Routes } from "react-router-dom";
-import Home from "./pages/Home";
-import MyPage from './pages/MyPage';
-import RecordPage from "./pages/RecordPage";
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Header from './pages/Header';
+import Home from './pages/Home';
+import MyPage from './pages/MyPage';
+import RecordPage from './pages/RecordPage';
+import "./App.css";
 
 function App() {
   return (
-    <div className="app">
-      <Header></Header>      
-      <Routes>
-        <Route path="/home" element={<Home/>} />
-        <Route path="/" element={<Home/>} />
-        <Route path="/Mypage" element={<MyPage/>} />
-        <Route path="/Record" element={<RecordPage/>} />    
-      </Routes>
-    </div>
+    <Router>  {/* Router 추가 */}
+      <div className="app">
+        <Header />
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/Mypage" element={<MyPage />} />
+          <Route path="/Record" element={<RecordPage />} />
+        </Routes>
+      </div>
+    </Router>
   );
 }
 
 export default App;
+
