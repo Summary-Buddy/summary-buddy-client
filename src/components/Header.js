@@ -57,7 +57,7 @@ export default function Header() {
 
         {/* Sign in, Sign up 오른쪽 */}
         <div className="d-flex align-items-center">
-          <a className="nav-link fw-bold" href="/" style={{ marginRight: '10px' }}>Sign in</a>
+          <a className="nav-link fw-bold" href="/Login" style={{ marginRight: '10px' }}>Sign in</a>
           <form className="d-flex rounded" role="search" style={{ marginRight: '20px', backgroundColor: '#FC819E' }}>
             <button className="btn btb-default rounded fw-bold" type="submit" style={{ color: 'white' }}>
               Sign up
