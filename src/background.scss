@@ -2,7 +2,17 @@ $primary: #FFF3C7;
 
 @import '~bootstrap/scss/bootstrap';
 
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  background-color: $primary; /* html과 body에도 배경색을 적용 */
+}
+
 .app-container {
   background-color: $primary;
-  min-height: 100vh;
+  min-height: 100vh;  /* 화면 전체 높이를 항상 유지 */
+  display: flex;
+  justify-content: center; /* 수평 중앙 정렬 (필요 시) */
+  align-items: center; /* 수직 중앙 정렬 (필요 시) */
 }
