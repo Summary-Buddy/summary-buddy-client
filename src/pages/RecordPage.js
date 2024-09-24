@@ -1,5 +1,5 @@
-import './RecordPage.css';
-import './background.scss';
+
+import '../background.scss';
 
 
 

@@ -40,8 +40,9 @@
 //   );
 // };
 import React from 'react';
-import './background.scss';
-import buddy from './buddy.png'; // 로고 이미지 파일 경로
+import '../background.scss';
+import buddy from '../pages/buddy.png'; // 로고 이미지 파일 경로
+import { Link } from 'react-router-dom';
 
 export default function Header() {
   return (
@@ -99,11 +100,13 @@ export default function Header() {
 
           {/* Sign in, Sign up 오른쪽 */}
           <div className="d-flex align-items-center">
-            <a className="nav-link" href="/" style={{ marginRight: '10px' }}>Sign in</a>
+            <a className="nav-link" href="/Login" style={{ marginRight: '10px' }}>Sign in</a>
             <form className="d-flex rounded" role="search" style={{ marginRight: '20px', backgroundColor: '#FC819E' }}>
-              <button className="btn btb-default rounded fw-bold" type="submit" style={{ color: 'white' }}>
-                Sign up
-              </button>
+              <Link to="/Register">
+                <button className="btn btb-default rounded fw-bold" type="submit" style={{ color: 'white' }}>
+                  Sign up
+                </button>
+              </Link>
             </form>
           </div>
         </div>

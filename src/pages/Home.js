@@ -1,5 +1,5 @@
-import './Home.css';
-import './background.scss';
+
+import '../background.scss';
 
 
 
