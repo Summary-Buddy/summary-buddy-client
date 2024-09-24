@@ -23,6 +23,7 @@ const RecordPage = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [filteredMembers, setFilteredMembers] = useState([]);
   const [selectedMembers, setSelectedMembers] = useState([]); // 클릭된 회원들을 배열로 저장
+  const [isRecording, setIsRecording] = useState(false); // 녹음 상태 관리
 
   // 입력 변화 처리 함수
   const handleSearchChange = (event) => {
@@ -66,6 +67,19 @@ const RecordPage = () => {
     // 여기에 녹음 파일 저장하는 로직을 추가합니다.
     // 예를 들어, 파일 선택 창을 열거나 서버로 파일을 전송하는 기능을 추가할 수 있습니다.
     alert('회의 내용을 저장합니다.');
+  };
+
+  const handleRecordingToggle = () => {
+    setIsRecording(!isRecording); // 녹음 상태 토글
+    if (!isRecording) {
+      // 녹음 시작 로직
+      console.log('녹음 시작');
+      alert('녹음을 시작합니다.');
+    } else {
+      // 녹음 중지 로직
+      console.log('녹음 중지');
+      alert('녹음을 중지합니다.');
+    }
   };
 
   return (
@@ -222,7 +236,45 @@ const RecordPage = () => {
           </>
         )}
       </Container>
-      {/* 새로 추가한 버튼 */}
+
+      {/* 녹음 버튼 */}
+      <div style={{
+        position: 'absolute',
+        bottom: '450px',
+        left: '23%',
+        transform: 'translateX(-50%)',
+        backgroundColor: isRecording ? '#FC819E' : '#FCD9E6', // 녹음 중일 때 색상 변경
+        borderRadius: '50%',
+        width: '100px',
+        height: '100px',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        cursor: 'pointer',
+        zIndex: 2
+      }}
+        onClick={handleRecordingToggle}
+      >
+        <i className={`bi ${isRecording ? 'bi-mic' : 'bi-mic-mute'}`} style={{ fontSize: '2rem', color: 'white' }}></i>
+      </div>
+      
+      {/* 애니메이션 버튼 */} 
+      <div style={{
+        position: 'absolute',
+        bottom: '427px',
+        left: '23%',
+        transform: 'translateX(-50%)',
+        width: '150px',
+        height: '150px',
+        backgroundColor: 'rgba(128, 128, 128, 0.5)',
+        borderRadius: '50%',
+        zIndex: 1,
+        animation: isRecording ? 'pulse 1.5s infinite' : 'none', // 녹음 중일 때만 애니메이션 적용
+      }}>
+      </div>
+
+
+      {/* 저장 버튼 */}
       <Button 
         onClick={handleSaveRecording} // 버튼을 클릭하면 실행되는 함수
         style={{
@@ -242,6 +294,21 @@ const RecordPage = () => {
       >
         회의 저장하고 회의록 요약하기
       </Button>
+
+      {/* 녹음 상태 문구 */}
+      <div style={{
+          position: 'absolute',
+          bottom: '650px',
+          left: '23%',
+          transform: 'translateX(-50%)',
+          fontSize: '1.5rem', // 글씨 크기 조정
+          fontWeight: 'bold',
+          textAlign: 'center',
+          color: 'black'
+        }}>
+          {isRecording ? '녹음 중입니다' : '회의 녹음을 시작하세요'}
+        </div>
+      
     </Container>
   );
 };
