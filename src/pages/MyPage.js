@@ -1,4 +1,6 @@
 import './MyPage.css';
+import './background.scss';
+
 
 
 export default function MyPage() {

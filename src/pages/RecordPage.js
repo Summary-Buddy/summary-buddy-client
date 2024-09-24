@@ -1,4 +1,6 @@
 import './RecordPage.css';
+import './background.scss';
+
 
 
 export default function RecordPage() {

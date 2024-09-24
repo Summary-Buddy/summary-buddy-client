@@ -1,31 +1,35 @@
-import './Header.css';
-import { Navbar as BootstrapNavbar, Container, Nav, Form, Button } from 'react-bootstrap';
-import { Link } from 'react-router-dom'; // Link 컴포넌트 가져오기
+import React from 'react';
+import './background.scss';
+
 
 export default function Header() {
-    return (
-        <BootstrapNavbar expand="lg" className="navbar-custom">
-            <Container fluid>
-                <BootstrapNavbar.Brand as={Link} to="/">Summary Buddy</BootstrapNavbar.Brand>
-                <BootstrapNavbar.Toggle aria-controls="navbarScroll" />
-                <BootstrapNavbar.Collapse id="navbarScroll">
-                    <Nav
-                        className="me-auto my-2 my-lg-0"
-                        style={{ maxHeight: '100px' }}
-                        navbarScroll
-                    >
-                        <Nav.Link as={Link} to="/">Home</Nav.Link> {/* 링크 수정 */}
-                        <Nav.Link as={Link} to="/Record">Record</Nav.Link>
-                        <Nav.Link as={Link} to="/Mypage">MyPage</Nav.Link>
-                        
-                       
-                    </Nav>
-                    <Form className="d-flex">
-                        <Button variant="outline-success">Sign In</Button>
-                        <Button variant="outline-success">Sign Up</Button>
-                    </Form>
-                </BootstrapNavbar.Collapse>
-            </Container>
-        </BootstrapNavbar>
-    );
-}
+  return (
+    <nav className="navbar navbar-expand-lg" style={{backgroundColor: '#FFF3C7'}}>
+      <div className="container-fluid" style={{ marginLeft: '100px' }}>
+        <a className="navbar-brand fw-bold" href="/">SummaryBuddy</a>
+        <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+          <span className="navbar-toggler-icon"></span>
+        </button>
+        <div className="collapse navbar-collapse" id="navbarSupportedContent">
+         <ul className="navbar-nav mx-auto mb-2 mb-lg-0"> {/* 중앙 정렬 */}
+            <li className="nav-item" style={{ marginLeft: '270px' }}>
+              <a className="nav-link fw-bold" href="/">Home</a>
+            </li>
+            <li className="nav-item" style={{ marginLeft: '270px' }}>
+              <a className="nav-link fw-bold" href="/Record">Record</a>
+            </li>
+            <li className="nav-item" style={{ marginLeft: '250px' }}>
+              <a className="nav-link fw-bold" href="/MyPage">Summary</a>
+            </li>
+            <li className="nav-item" style={{ marginLeft: '320px' }}>
+              <a className="nav-link fw-bold" href="/">Sign in</a>
+            </li>
+          </ul>
+          <form className="d-flex rounded" role="search" style={{ marginRight: '100px', backgroundColor: '#FC819E'}}>
+            <button className="btn rounded fw-bold" type="submit" style={{ color: 'white' }}>Sign up</button>
+          </form>
+    </div>
+  </div>
+</nav>
+  );
+};

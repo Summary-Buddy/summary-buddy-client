@@ -5,6 +5,8 @@ import Home from './pages/Home';
 import MyPage from './pages/MyPage';
 import RecordPage from './pages/RecordPage';
 import "./App.css";
+import './pages/background.scss';
+
 
 function App() {
   return (
