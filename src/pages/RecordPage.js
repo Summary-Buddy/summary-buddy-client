@@ -2,6 +2,7 @@ import '../background.scss';
 import React, { useState } from 'react';
 import { Container, Card, Form, Button } from 'react-bootstrap';
 import 'bootstrap-icons/font/bootstrap-icons.css';
+import './RecordPage.css';
 
 
 const RecordPage = () => {
@@ -16,71 +17,60 @@ const RecordPage = () => {
     '김지수',
     '이수민',
     '한가영',
-    '윤종훈'
+    '윤종훈',
+    'qwerqwer',
+    'qwerqwer1'
   ];
 
-  // 검색 상태와 클릭한 회원 상태
+  
+  // 상태 관리
   const [searchTerm, setSearchTerm] = useState('');
   const [filteredMembers, setFilteredMembers] = useState([]);
   const [selectedMembers, setSelectedMembers] = useState([]); // 클릭된 회원들을 배열로 저장
   const [isRecording, setIsRecording] = useState(false); // 녹음 상태 관리
 
-  // 입력 변화 처리 함수
+  // 검색어 입력 처리 함수
   const handleSearchChange = (event) => {
     const value = event.target.value;
     setSearchTerm(value);
 
-    // 입력된 검색어에 따라 필터링
-    if (value === '') {
-      setFilteredMembers([]); // 검색어가 없으면 필터링 결과를 빈 배열로 설정
-    } else {
-      const filtered = members.filter((member) =>
-        member.includes(value) // 회원 이름에 검색어가 포함된 경우
-      );
-      setFilteredMembers(filtered);
-    }
+    // 필터링된 회원 목록 업데이트
+    const filtered = value
+      ? members.filter((member) => member.includes(value)) // 검색어가 있으면 필터링
+      : []; // 검색어가 없으면 빈 배열
+    setFilteredMembers(filtered);
   };
 
-  // 회원 카드 클릭 처리 함수
+  // 회원 카드 클릭 처리 함수 (플러스 아이콘과 통합)
   const handleMemberClick = (member) => {
-    // 이미 선택된 회원이 아니면 추가
-    if (!selectedMembers.includes(member)) {
-      setSelectedMembers([...selectedMembers, member]);
+    if (member && !selectedMembers.includes(member)) {
+      setSelectedMembers((prevSelected) => [...prevSelected, member]); // 이전 상태를 기반으로 업데이트
     }
   };
 
   // 회원 카드 삭제 처리 함수
   const handleRemoveMember = (member) => {
-    setSelectedMembers(selectedMembers.filter((m) => m !== member));
+    setSelectedMembers((prevSelected) => prevSelected.filter((m) => m !== member)); // 선택된 회원 제거
   };
 
-  // 플러스 아이콘 클릭 처리 함수
-  const handleAddSelectedMember = (member) => {
-    // 선택된 회원이 아니면 추가
-    if (member && !selectedMembers.includes(member)) {
-      setSelectedMembers([...selectedMembers, member]);
-    }
-  };
-
-  // 음성녹음 저장 처리 함수
+  // 음성 녹음 저장 처리 함수
   const handleSaveRecording = () => {
-    // 여기에 녹음 파일 저장하는 로직을 추가합니다.
-    // 예를 들어, 파일 선택 창을 열거나 서버로 파일을 전송하는 기능을 추가할 수 있습니다.
     alert('회의 내용을 저장합니다.');
+    // 파일 저장 로직 추가 가능
   };
 
+  // 녹음 시작/중지 처리 함수
   const handleRecordingToggle = () => {
-    setIsRecording(!isRecording); // 녹음 상태 토글
+    setIsRecording((prevIsRecording) => !prevIsRecording); // 함수형 업데이트
     if (!isRecording) {
-      // 녹음 시작 로직
       console.log('녹음 시작');
       alert('녹음을 시작합니다.');
     } else {
-      // 녹음 중지 로직
       console.log('녹음 중지');
       alert('녹음을 중지합니다.');
     }
   };
+
 
   return (
     <Container className="mt-4" style={{ position: 'relative', height: '100vh' }}>
@@ -109,7 +99,7 @@ const RecordPage = () => {
               onChange={handleSearchChange}
               placeholder="참가자를 추가하세요."
               className="mb-3"
-              style={{ borderRadius: '15px', width: 'calc(100% - 40px)', marginRight: '10px' }} // 아이콘 자리만큼 줄이기
+              style={{ borderRadius: '10px', width: 'calc(100% - 40px)', marginRight: '10px', border: 'none' }} // 아이콘 자리만큼 줄이기
             />
             <i className="bi bi-search" style={{ fontSize: '1.5rem', marginTop: '-15px' }}></i> {/* marginTop 추가 */}
           </div>
@@ -120,31 +110,34 @@ const RecordPage = () => {
               <div style={{ width: '100%' }}> {/* 가로폭을 100%로 설정 */}
                 {filteredMembers.map((member, index) => (
                   <Card
-                  key={index}
-                  onClick={() => handleMemberClick(member)}
-                  style={{
-                    cursor: 'pointer',
-                    marginBottom: '10px',
-                    width: 'calc(100% - 50px)', // 아이콘 자리만큼 더 줄이기
-                    backgroundColor: 'white',
-                    border: 'none',
-                    borderRadius: '10px',
-                    padding: '10px',
-                    position: 'relative', // 상대 위치로 설정
-                  }}
-                >
-                  <Card.Body style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <Card.Text className="fw-bold" style={{ margin: 0, flex: '1', textAlign: 'center' }}>
-                      {member}
-                    </Card.Text>
-                    {/* 추가된 회원이 아닌 경우에만 플러스 아이콘 표시 */}
-                    {!selectedMembers.includes(member) && (
+                    key={index}
+                    style={{
+                      cursor: 'pointer',
+                      marginBottom: '10px',
+                      width: 'calc(100% - 50px)', // 아이콘 자리만큼 더 줄이기
+                      backgroundColor: 'white',
+                      border: 'none',
+                      borderRadius: '10px',
+                      padding: '10px',
+                      position: 'relative', // 상대 위치로 설정
+                    }}
+                  >
+                    <Card.Body style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <Card.Text className="fw-bold" style={{ margin: 0, flex: '1', textAlign: 'center' }}>
+                        {member}
+                      </Card.Text>
+                      {/* 추가된 회원이 아닌 경우에만 플러스 아이콘 표시 */}
+                      {!selectedMembers.includes(member) && (
                         <i className="bi bi-plus-circle" 
-                           onClick={() => handleAddSelectedMember(member)} 
-                           style={{ fontSize: '1.5rem', cursor: 'pointer', position: 'absolute', right: '-45px', top: '50%', transform: 'translateY(-50%)' }}></i>
+                          onClick={(e) => {
+                            e.stopPropagation(); // 부모 요소의 클릭 이벤트 중지
+                            handleMemberClick(member);
+                          }}
+                          style={{ fontSize: '1.5rem', cursor: 'pointer', position: 'absolute', right: '-45px', top: '50%', transform: 'translateY(-50%)' }}>
+                        </i>
                       )}
-                  </Card.Body>
-                </Card>
+                    </Card.Body>
+                  </Card>
                 ))}
               </div>
             ) : (
@@ -258,20 +251,23 @@ const RecordPage = () => {
         <i className={`bi ${isRecording ? 'bi-mic' : 'bi-mic-mute'}`} style={{ fontSize: '2rem', color: 'white' }}></i>
       </div>
       
-      {/* 애니메이션 버튼 */} 
-      <div style={{
-        position: 'absolute',
-        bottom: '427px',
-        left: '23%',
-        transform: 'translateX(-50%)',
-        width: '150px',
-        height: '150px',
-        backgroundColor: 'rgba(128, 128, 128, 0.5)',
-        borderRadius: '50%',
-        zIndex: 1,
-        animation: isRecording ? 'pulse 1.5s infinite' : 'none', // 녹음 중일 때만 애니메이션 적용
-      }}>
-      </div>
+      {/* 애니메이션 버튼 */}
+      {isRecording && (
+        <div
+          style={{
+            position: 'absolute',
+            bottom: '435px',
+            left: '18.1%',
+            transform: 'translateX(-50%)',
+            width: '130px',
+            height: '130px',
+            backgroundColor: 'rgba(192, 192, 192, 0.3)', // 더 연한 회색
+            borderRadius: '50%',
+            zIndex: 1, // 녹음 버튼보다 뒤에 위치
+            animation: 'pulse-animation 1.5s infinite', // 애니메이션 이름 변경
+          }}
+        ></div>
+      )}
 
 
       {/* 저장 버튼 */}
