@@ -21,8 +21,6 @@ export default function MyPage() {
     }
   };
 
-
-
   return (
     <div className="mt-5 d-flex flex-column align-items-center" style={{ height: '100vh', backgroundColor: '#FFF3C7' }}>
       {/* 닉네임 및 이메일 표시 섹션 */}
