@@ -27,7 +27,7 @@
   
   .Summary {
     display: flex; /* Flexbox로 좌우 아이템 정렬 */
-    justify-content: space-between; /* 아이템 간 간격 유지 */
+    justify-content: space-evenly; /* 아이템 간 간격 유지 */
     align-items: flex-start; /* 위쪽으로 맞춤 */
     width: 80%; /* 화면 너비의 80% 차지 */
   }
@@ -43,12 +43,14 @@
   .custom-scrollbar.left {
     width: 45%; /* 화면 너비의 45% 차지 */
     height: 720px;
+    margin-top: 50px;
   }
   
   /* 오른쪽 회의록 상세 보기 */
   .custom-scrollbar.right {
     width: 45%; /* 화면 너비의 45% 차지 */
     height: 720px;
+    margin-top: 50px;
     position: relative; /* 하단 버튼 고정을 위한 상대 위치 */
   }
   
