@@ -32,7 +32,7 @@ export default function Register() {
     }
 
     Swal.fire({
-      title: "비밀번호가 일치하지 않습니다.",
+      title: "회원가입 성공!",
       icon: "success",
       confirmButtonColor: '#F7418F', // 버튼 색상 변경
       background: 'white' // 알림창 배경색 변경
