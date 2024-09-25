@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
 import '../background.scss';
 import Swal from 'sweetalert2';
+import { useNavigate } from 'react-router-dom';
 
 export default function Register() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [chpassword, setChpassword] = useState('');
   const [email, setEmail] = useState('');
+  const navigate = useNavigate();
 
   const handleRegister = (e) => {
     e.preventDefault();
@@ -36,6 +38,8 @@ export default function Register() {
       icon: "success",
       confirmButtonColor: '#F7418F', // 버튼 색상 변경
       background: 'white' // 알림창 배경색 변경
+    }).then(() => {
+      navigate('/Login');
     });
   }
 
