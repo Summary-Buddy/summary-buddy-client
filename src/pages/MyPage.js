@@ -2,6 +2,7 @@ import React, {useState} from 'react';
 import { Container, Form, Button, Row, Col } from 'react-bootstrap';
 import './MyPage.css';
 import '../background.scss';
+import Swal from 'sweetalert2';
 
 
 export default function MyPage() {
@@ -14,10 +15,20 @@ export default function MyPage() {
     setErrorMessage(''); // 오류 메시지 초기화
   
     if (newPassword !== confirmPassword) {
-      setErrorMessage('비밀번호가 일치하지 않습니다.'); // 오류 메시지 설정
+      Swal.fire({
+        title: "비밀번호가 일치하지 않습니다.",
+        icon: "warning",
+        confirmButtonColor: '#F7418F', // 버튼 색상 변경
+        background: 'white' // 알림창 배경색 변경
+      });
     } else {
       // 비밀번호 변경 로직 추가 (API 호출 등)
-      alert('비밀번호가 변경되었습니다.'); // 성공 메시지 (예시)
+      Swal.fire({
+        title: "비밀번호 변경 성공!",
+        icon: "success",
+        confirmButtonColor: '#F7418F', // 버튼 색상 변경
+        background: 'white' // 알림창 배경색 변경
+      });
     }
   };
 
