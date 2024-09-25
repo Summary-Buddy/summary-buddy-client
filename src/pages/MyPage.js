@@ -6,31 +6,87 @@ import Swal from 'sweetalert2';
 
 
 export default function MyPage() {
-  const [newPassword, setNewPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [errorMessage, setErrorMessage] = useState('');
-
-  const handleSubmit = (event) => {
-    event.preventDefault(); // 기본 제출 동작 방지
-    setErrorMessage(''); // 오류 메시지 초기화
   
-    if (newPassword !== confirmPassword) {
+    const [newPassword, setNewPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
+    const [errorMessage, setErrorMessage] = useState('');
+    const [newEmail, setNewEmail] = useState('');
+  
+    // 비밀번호 변경 핸들러
+    const handlePasswordSubmit = (event) => {
+      event.preventDefault(); // 기본 제출 동작 방지
+      setErrorMessage(''); // 오류 메시지 초기화
+
+      // 비밀번호가 비어 있는지 확인
+      if (!newPassword || !confirmPassword) {
+        Swal.fire({
+          title: "모든 필드를 입력해주세요.",
+          icon: "warning",
+          confirmButtonColor: '#F7418F', // 버튼 색상 변경
+          background: 'white' // 알림창 배경색 변경
+        });
+        return;
+      }
+  
+      // 비밀번호 일치 확인
+      if (newPassword !== confirmPassword) {
+        Swal.fire({
+          title: "비밀번호가 일치하지 않습니다.",
+          icon: "warning",
+          confirmButtonColor: '#F7418F', // 버튼 색상 변경
+          background: 'white' // 알림창 배경색 변경
+        });
+      } else {
+        // 비밀번호 변경 로직 추가 (API 호출 등)
+        Swal.fire({
+          title: "비밀번호 변경 성공!",
+          icon: "success",
+          confirmButtonColor: '#F7418F', // 버튼 색상 변경
+          background: 'white' // 알림창 배경색 변경
+        });
+        // 상태 초기화
+        setNewPassword('');
+        setConfirmPassword('');
+      }
+    };
+  
+    // 이메일 변경 핸들러
+    const handleEmailSubmit = (event) => {
+      event.preventDefault(); // 기본 폼 제출 동작 방지
+  
+      // 이메일 유효성 검사 (예시로 간단한 정규 표현식 사용)
+      const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+      if (!newEmail) {
+        Swal.fire({
+          title: "모든 필드를 입력해주세요.",
+          icon: "warning",
+          confirmButtonColor: '#F7418F', // 버튼 색상 변경
+          background: 'white' // 알림창 배경색 변경
+        });
+        return;
+      }
+
+      if (!emailPattern.test(newEmail)) {
+        Swal.fire({
+          title: "유효하지 않은 이메일 형식입니다.",
+          icon: "warning",
+          confirmButtonColor: '#F7418F',
+          background: 'white'
+        });
+        return;
+      }
+
+      // 이메일 변경 로직 추가 (API 호출 등)
       Swal.fire({
-        title: "비밀번호가 일치하지 않습니다.",
-        icon: "warning",
-        confirmButtonColor: '#F7418F', // 버튼 색상 변경
-        background: 'white' // 알림창 배경색 변경
-      });
-    } else {
-      // 비밀번호 변경 로직 추가 (API 호출 등)
-      Swal.fire({
-        title: "비밀번호 변경 성공!",
+        title: "이메일 변경 성공!",
         icon: "success",
         confirmButtonColor: '#F7418F', // 버튼 색상 변경
         background: 'white' // 알림창 배경색 변경
       });
-    }
-  };
+      
+      setNewEmail(''); // 입력 필드 초기화
+    };
 
   return (
     <div className="mt-5 d-flex flex-column align-items-center" style={{ height: '100vh', backgroundColor: '#FFF3C7' }}>
@@ -58,7 +114,7 @@ export default function MyPage() {
       {/* 비밀번호 변경 섹션 */}
       <Container className="mb-4" style={{ maxWidth: '400px', marginLeft: '-40px' }}>
         <h2 className="text-left" style={{ fontSize: '1.5rem', fontWeight: 'bold' }}>비밀번호 변경</h2>
-        <Form className="password-form mt-4" onSubmit={handleSubmit}>
+        <Form className="password-form mt-4" onSubmit={handlePasswordSubmit}>
           <Form.Group controlId="formNewPassword" className="mb-3">
             <Form.Control 
               type="password" 
@@ -96,6 +152,7 @@ export default function MyPage() {
               fontWeight: 'bold',
               height: 'calc(2.25rem + 2px)' // 부트스트랩의 기본 버튼 높이와 일치하도록 조정
             }}
+            onClick={handlePasswordSubmit}
           >
             비밀번호 변경하기
           </Button>
@@ -105,12 +162,14 @@ export default function MyPage() {
       {/* 이메일 변경 섹션 */}
       <Container className="mb-4" style={{ maxWidth: '400px', marginRight: '-40px' }}>
         <h2 className="text-left" style={{ fontSize: '1.5rem', fontWeight: 'bold' }}>이메일 변경</h2>
-        <Form className="email-form mt-4">
+        <Form className="email-form mt-4" onSubmit={handleEmailSubmit}>
           <Form.Group controlId="formNewEmail" className="mb-3">
             <Form.Control 
               type="email" 
               placeholder="새로운 이메일" 
               required
+              value={newEmail}
+              onChange={(e) => setNewEmail(e.target.value)}
               style={{ borderColor: 'white', borderWidth: '1px', borderStyle: 'solid', paddingTop: '10px', paddingBottom: '10px' }} // 테두리 설정
             />
           </Form.Group>
@@ -134,6 +193,7 @@ export default function MyPage() {
               fontWeight: 'bold',
               height: 'calc(2.25rem + 2px)', // 부트스트랩의 기본 버튼 높이와 일치하도록 조정
             }}
+            onClick={handleEmailSubmit}
           >
             이메일 변경하기
           </Button>
