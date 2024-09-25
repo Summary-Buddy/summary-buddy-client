@@ -40,11 +40,15 @@
 //   );
 // };
 import React from 'react';
+// import { useEffect, useState } from 'react';
 import '../background.scss';
 import buddy from '../pages/buddy.png'; // 로고 이미지 파일 경로
 import { Link } from 'react-router-dom';
 
 export default function Header() {
+
+
+
   return (
     <>
       <style>{`
@@ -108,6 +112,34 @@ export default function Header() {
                 </button>
               </Link>
             </form>
+
+            {/* 로그인 여부에 따른 사이드바 변경 *}
+            {/* {isLoggedIn ? (
+              <>
+                
+                <a className="nav-link" href="/Home" style={{ marginRight: '10px' }} onClick={handleLogout}>Sign out</a>
+
+                
+                <form className="d-flex rounded" role="search" style={{ marginRight: '20px', backgroundColor: '#FC819E' }}>
+                  <Link to="/MyPage">
+                    <button className="btn btn-default rounded fw-bold" type="button" style={{ color: 'white' }}>
+                      {userName}
+                    </button>
+                  </Link>
+                </form>
+              </>
+            ) : (
+              <>
+                <a className="nav-link" href="/Login" style={{ marginRight: '10px' }}>Sign in</a>
+                <form className="d-flex rounded" role="search" style={{ marginRight: '20px', backgroundColor: '#FC819E' }}>
+                  <Link to="/Register">
+                    <button className="btn btb-default rounded fw-bold" type="submit" style={{ color: 'white' }}>
+                      Sign up
+                    </button>
+                  </Link>
+                </form>
+              </>
+            )} */}
           </div>
         </div>
       </nav>
