@@ -63,8 +63,8 @@ export default function SmPage() {
                     backgroundColor: 'rgba(255, 255, 255, 0.4)', // 흰색에 40% 투명도
                     borderRadius: '15px',
                     position: 'absolute',
-                    top: '170px',
-                    left: '280px',
+                    top: '11rem',
+                    left: '16rem',
                     width: '680px', // 고정 너비
                     height: '720px', // 고정 높이
                     padding: '30px',
@@ -102,8 +102,8 @@ export default function SmPage() {
                 {/* 오른쪽 선택된 회의록의 상세 내용 표시 */}
                 <div className="custom-scrollbar" style={{
                     position: 'absolute',
-                    top: '17g0px',
-                    left: '1000px', // 오른쪽에 위치
+                    top: '11rem',
+                    left: '60rem', // 오른쪽에 위치
                     width: '680px',
                     height: '720px',
                     backgroundColor: 'rgba(255, 255, 255, 0.4)',
