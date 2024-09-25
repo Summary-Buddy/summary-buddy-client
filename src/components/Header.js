@@ -78,7 +78,7 @@ export default function Header() {
       <nav className="navbar navbar-expand-lg" style={{ backgroundColor: '#FFF3C7' }}>
         <div className="container-fluid d-flex justify-content-between align-items-center">
           {/* SummaryBuddy 왼쪽 */}
-          <a className="navbar-brand fw-bold" href="/" style={{ marginLeft: '20px' }}>
+          <a className="navbar-brand fw-bold" href="/MyPage" style={{ marginLeft: '20px' }}>
           <img src={buddy} alt="SummaryBuddy Logo" style={{ width: '40px', marginRight: '10px' }} /> {/* 로고 이미지 추가 */}
             SummaryBuddy
           </a>
@@ -93,7 +93,7 @@ export default function Header() {
                 <a className="nav-link" href="/Record">Record</a>
               </li>
               <li className="nav-item" style={{ marginLeft: '100px', marginRight: '100px' }}>
-                <a className="nav-link" href="/MyPage">Summary</a>
+                <a className="nav-link" href="/Summary">Summary</a>
               </li>
             </ul>
           </div>
