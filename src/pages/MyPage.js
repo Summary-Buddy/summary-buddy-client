@@ -56,7 +56,7 @@ export default function MyPage() {
   
       // 이메일 유효성 검사 (예시로 간단한 정규 표현식 사용)
       const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      
+
       if (!newEmail) {
         Swal.fire({
           title: "모든 필드를 입력해주세요.",
@@ -152,6 +152,7 @@ export default function MyPage() {
               fontWeight: 'bold',
               height: 'calc(2.25rem + 2px)' // 부트스트랩의 기본 버튼 높이와 일치하도록 조정
             }}
+            onClick={handlePasswordSubmit}
           >
             비밀번호 변경하기
           </Button>
@@ -192,6 +193,7 @@ export default function MyPage() {
               fontWeight: 'bold',
               height: 'calc(2.25rem + 2px)', // 부트스트랩의 기본 버튼 높이와 일치하도록 조정
             }}
+            onClick={handleEmailSubmit}
           >
             이메일 변경하기
           </Button>
