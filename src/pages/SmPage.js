@@ -46,103 +46,74 @@ export default function SmPage() {
       saveAs(blob, `${selectedMeeting.title}.pdf`);
   };
 
-    return (
-        <div className='app-container'>
-            <div className="Summary">
-                <h1 style={{
-                    textAlign: 'left',
-                    color: '#F7418F', // 핑크색
-                    fontWeight: 'bold', // 볼드체
-                    position: 'absolute',
-                    top: '10%',
-                    left: '5%',
-                }}>회의록 목록</h1>
+  return (
+    <div className='app-container'>
+        <div className="Summary">
+            <h1 style={{
+                textAlign: 'left',
+                color: '#F7418F', // 핑크색
+                fontWeight: 'bold', // 볼드체
+                position: 'absolute',
+                top: '10%',
+                left: '5%',
+            }}>회의록 목록</h1>
 
-                {/* 왼쪽 회의록 리스트 */}
-                <div className="custom-scrollbar" style={{
-                    backgroundColor: 'rgba(255, 255, 255, 0.4)', // 흰색에 40% 투명도
-                    borderRadius: '15px',
-                    position: 'absolute',
-                    top: '11rem',
-                    left: '16rem',
-                    width: '680px', // 고정 너비
-                    height: '720px', // 고정 높이
-                    padding: '30px',
-                    overflowY: 'auto', // 수직 스크롤 가능
-                }}>
-                    {/* 회의록 목록을 데이터 배열을 통해 생성 */}
-                    {meetingMinutes.map((meeting, index) => (
-                        <div key={index} style={{
-                            backgroundColor: 'rgba(255, 182, 193, 0.6)', // 핑크색 배경
-                            borderRadius: '10px',
-                            padding: '15px',
-                            marginBottom: '20px', // 박스 간 간격
-                            cursor: 'pointer' // 클릭할 수 있게 커서 변경
-                        }}
-                        onClick={() => setSelectedMeeting(meeting)} // 클릭 시 해당 회의록을 선택
-                        >
-                            <h5 style={{ margin: '0' }}>{meeting.title}</h5> {/* 회의 제목 */}
+            {/* 왼쪽 회의록 리스트 */}
+            <div className="custom-scrollbar left">
+                {meetingMinutes.map((meeting, index) => (
+                    <div key={index} style={{
+                        backgroundColor: 'rgba(255, 182, 193, 0.6)', // 핑크색 배경
+                        borderRadius: '10px',
+                        padding: '15px',
+                        marginBottom: '20px', // 박스 간 간격
+                        cursor: 'pointer' // 클릭할 수 있게 커서 변경
+                    }}
+                    onClick={() => setSelectedMeeting(meeting)} // 클릭 시 해당 회의록을 선택
+                    >
+                        <h5 style={{ margin: '0' }}>{meeting.title}</h5> {/* 회의 제목 */}
+                        <p style={{
+                            margin: '0',
+                            fontSize: '0.9rem',
+                            overflow: 'hidden', // 넘치는 내용 숨기기
+                            display: '-webkit-box',
+                            WebkitBoxOrient: 'vertical',
+                            WebkitLineClamp: 2, // 2줄로 제한
+                            color: 'gray',
+                            marginTop: '5px'
+                        }}>
+                            {meeting.content} {/* 회의 내용 */}
+                        </p>
+                    </div>
+                ))}
+            </div>
 
-                            <p style={{
-                                margin: '0',
-                                fontSize: '0.9rem',
-                                overflow: 'hidden', // 넘치는 내용 숨기기
-                                display: '-webkit-box',
-                                WebkitBoxOrient: 'vertical',
-                                WebkitLineClamp: 2, // 2줄로 제한
-                                color: 'gray',
-                                marginTop: '5px'
+            {/* 오른쪽 선택된 회의록의 상세 내용 표시 */}
+            <div className="custom-scrollbar right">
+                {selectedMeeting ? (
+                    <>
+                        <h5 style={{ fontWeight: 'bold', fontSize: '1.5rem' }}>{selectedMeeting.title}</h5>
+                        <p style={{ fontWeight: 'normal', lineHeight:'1.5' }}>{selectedMeeting.content}</p>
+
+                         {/* 다운로드 PDF 버튼을 아이콘과 텍스트 링크로 변경 */}
+                         <div className="download-btn">
+                            <FaFilePdf />
+                            <a href="#" onClick={handleDownloadPDF} style={{
+                                fontSize: '1rem',
+                                color: '#007bff',
+                                textDecoration: 'underline',
+                                cursor: 'pointer',
+                                fontWeight: 'bold'
                             }}>
-                                {meeting.content} {/* 회의 내용 */}
-                            </p>
+                                {`${selectedMeeting.title}.pdf`}
+                            </a>
                         </div>
-                    ))}
-                </div>
-
-                {/* 오른쪽 선택된 회의록의 상세 내용 표시 */}
-                <div className="custom-scrollbar" style={{
-                    position: 'absolute',
-                    top: '11rem',
-                    left: '60rem', // 오른쪽에 위치
-                    width: '680px',
-                    height: '720px',
-                    backgroundColor: 'rgba(255, 255, 255, 0.4)',
-                    borderRadius: '15px',
-                    padding: '20px',
-                    overflowY: 'auto',
-                    textAlign: 'left'
-                }}>
-                    {selectedMeeting ? (
-                        <>
-                            <h5 style={{ fontWeight: 'bold', fontSize: '1.5rem' }}>{selectedMeeting.title}</h5>
-                            <p style={{ fontWeight: 'normal', lineHeight:'1.5' }}>{selectedMeeting.content}</p>
-
-                             {/* 다운로드 PDF 버튼을 아이콘과 텍스트 링크로 변경 */}
-                             <div style={{
-                                display: 'flex',
-                                alignItems: 'center',
-                                marginTop: '0px',
-                                position: 'absolute',  // 버튼을 절대 위치로 배치
-                                bottom: '20px',  // 하단에서 20px 띄우기
-                                right: '20px'  // 오른쪽에서 20px 띄우기
-                            }}>
-                                <FaFilePdf />
-                                <a href="#" onClick={handleDownloadPDF} style={{
-                                    fontSize: '1rem',
-                                    color: '#007bff',
-                                    textDecoration: 'underline',
-                                    cursor: 'pointer',
-                                    fontWeight: 'bold'
-                                }}>
-                                    {`${selectedMeeting.title}.pdf`}
-                                </a>
-                            </div>
-                        </>
-                    ) : (
-                        <p>회의록을 선택하세요</p> // 선택된 회의록이 없을 때 표시되는 메시지
-                    )}
-                </div>
+                    </>
+                ) : (
+                    <p>회의록을 선택하세요</p> // 선택된 회의록이 없을 때 표시되는 메시지
+                )}
             </div>
         </div>
-    );
+    </div>
+);
+
 }
