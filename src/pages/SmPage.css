@@ -1,0 +1,19 @@
+/* 웹킷 기반 브라우저에서 스크롤바 스타일링 */
+.custom-scrollbar::-webkit-scrollbar {
+    width: 8px; /* 스크롤바의 너비 */
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.2); /* 트랙의 배경색 */
+    border-radius: 10px; /* 트랙의 모서리 둥글게 */
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+    background-color: #FC819E; /* 핑크색 스크롤바 */
+    border-radius: 10px; /* 스크롤바의 모서리 둥글게 */
+    /* border: 2px solid rgba(255, 255, 255, 0.4); 스크롤바의 외부 경계 */
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background-color: #FFB6C1; /* 스크롤바 위에 마우스를 올렸을 때 색상 변경 */
+}

@@ -8,6 +8,7 @@ import "./App.css";
 import './background.scss';
 import Login from './pages/Login';
 import Register from './pages/Register';
+import SmPage from './pages/SmPage';
 
 
 function App() {
@@ -16,11 +17,12 @@ function App() {
       <div className="app">
         <Header />
         <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/Mypage" element={<MyPage />} />
-          <Route path="/Record" element={<RecordPage />} />
+          <Route path= "/" element={<Home />} />
+          <Route path= "/Mypage" element={<MyPage />} />
+          <Route path= "/Record" element={<RecordPage />} />
           <Route path = "/Login" element = { <Login />} />
           <Route path = "/Register" element = {<Register />} />
+          <Route path= "/Summary" element = {<SmPage />} />
         </Routes>
       </div>
   );
