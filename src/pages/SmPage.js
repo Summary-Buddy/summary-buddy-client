@@ -11,9 +11,7 @@ export default function SmPage() {
 
     // PDF 파일 다운로드
     const handleDownloadPDF = async(reportId) => {
-        const res = await client.post(`/report/pdf`, {reportId}, {
-            headers: {Authorization: process.env.REACT_APP_TEMP_AUTH_HEADER} // 로그인 구현되면 수정 필요
-        });
+        const res = await client.post(`/report/pdf`, {reportId});
         window.open(res.data.pdfDownloadUrl, "_blank");
     };
 
@@ -22,16 +20,12 @@ export default function SmPage() {
   }, []);
 
   const fetchDocs = async() => {
-    const res = await client.get('/report', {
-        headers: {Authorization: process.env.REACT_APP_TEMP_AUTH_HEADER} // 로그인 구현되면 수정 필요
-    });
+    const res = await client.get('/report');
     setMeetingMinutes(res.data);
   }
 
   const fetchDetail = async(reportId) => {
-    const res = await client.get(`/report/${reportId}`, {
-        headers: {Authorization: process.env.REACT_APP_TEMP_AUTH_HEADER} // 로그인 구현되면 수정 필요
-    });
+    const res = await client.get(`/report/${reportId}`);
     setSelectedMeeting(res.data);
   }
 

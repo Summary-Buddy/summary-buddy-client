@@ -1,5 +1,11 @@
 .hover-button:hover {
-    background-color: rgba(252, 129, 158, 0.8); /* 연한 색으로 변경 */
-    border-color: rgba(252, 129, 158, 0.8); /* 연한 색으로 변경 */
-  }
-  
+  background-color: rgba(252, 129, 158, 0.8); /* 연한 색으로 변경 */
+  border-color: rgba(252, 129, 158, 0.8); /* 연한 색으로 변경 */
+}
+
+.delete-account-lable {
+  font-size: 0.8rem;
+  opacity: 30%;
+  margin-top: 1rem;
+  cursor: pointer;
+}

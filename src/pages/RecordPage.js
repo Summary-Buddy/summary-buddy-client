@@ -50,11 +50,7 @@ const RecordPage = () => {
   };
 
   const searchMember = async(query) => {
-    const res = await client.get(`/member/search?query=${query}`, {
-      headers: {
-        Authorization: process.env.REACT_APP_TEMP_AUTH_HEADER // 로그인 구현되면 수정 필요
-      }
-    });
+    const res = await client.get(`/member/search?query=${query}`);
     setFilteredMembers(res.data);
   }
 
