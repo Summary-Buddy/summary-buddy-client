@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import '../background.scss';
 import Swal from 'sweetalert2';
 import { useNavigate } from 'react-router-dom';
+import { client } from '../utils/client';
 
 export default function Register() {
   const [username, setUsername] = useState('');
@@ -10,7 +11,7 @@ export default function Register() {
   const [email, setEmail] = useState('');
   const navigate = useNavigate();
 
-  const handleRegister = (e) => {
+  const handleRegister = async(e) => {
     e.preventDefault();
 
     if(!username || !password || !chpassword || !email) {
@@ -33,14 +34,30 @@ export default function Register() {
       return;
     }
 
-    Swal.fire({
-      title: "회원가입 성공!",
-      icon: "success",
-      confirmButtonColor: '#F7418F', // 버튼 색상 변경
-      background: 'white' // 알림창 배경색 변경
-    }).then(() => {
-      navigate('/Login');
+    const body = {
+      username: username,
+      email: email,
+      password: password,
+      passwordConfirm: chpassword
+    }
+
+    const res = await fetch(process.env.REACT_APP_SERVER_API_URL + `/member/join`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      }, // 로그인 구현되면 수정 필요
+      body: JSON.stringify(body)
     });
+    if(res.ok) {
+      Swal.fire({
+        title: "회원가입 성공!",
+        icon: "success",
+        confirmButtonColor: '#F7418F', // 버튼 색상 변경
+        background: 'white' // 알림창 배경색 변경
+      }).then(() => {
+        navigate('/Login');
+      });
+    }
   }
 
   return (
