@@ -11,6 +11,37 @@ export default function Register() {
   const [chpassword, setChpassword] = useState('');
   const [email, setEmail] = useState('');
   const navigate = useNavigate();
+  const [isUsernameAvailable, setIsUsernameAvailable] = useState(null);
+
+  const checkUsername = async () => {
+    if (!username) {
+      Swal.fire({
+        title: "아이디를 입력해주세요.",
+        icon: "warning",
+        confirmButtonColor: '#F7418F',
+        background: 'white'
+      });
+      return;
+    }
+
+    try {
+      const response = await axios.post(ENDPOINTS.CHECK_USERNAME, { username });
+      setIsUsernameAvailable(!response.data); // 중복 여부 설정
+      Swal.fire({
+        title: response.data ? "아이디가 사용 중입니다." : "사용 가능한 아이디입니다.",
+        icon: response.data ? "error" : "success",
+        confirmButtonColor: '#F7418F',
+        background: 'white'
+      });
+    } catch (error) {
+      Swal.fire({
+        title: "서버 오류입니다.",
+        icon: "error",
+        confirmButtonColor: '#F7418F',
+        background: 'white'
+      });
+    }
+  };
 
   const handleRegister = (e) => {
     e.preventDefault();
@@ -87,6 +118,7 @@ export default function Register() {
             <label htmlFor="username" className="form-label"></label>
             <input type="text" className="form-control" style={{ height:'5rem', borderRadius: '15px', fontSize: '20px' }} id="username" placeholder="아이디를 입력하세요." 
             value={username} onChange={(e) => setUsername(e.target.value)}/>
+            <button onClick={checkUsername} className="btn btn-secondary mt-2">중복 확인</button>
           </div>
 
           <div className="mb-3 w-75">
