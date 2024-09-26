@@ -44,7 +44,7 @@ export default function MyPage() {
 
       try {
         const response = await axios.patch(ENDPOINTS.UPDATE, {
-          userid: getItem("userid"),
+          username: getItem("username"),
           newPassword,
           newPasswordConfirm : confirmPassword
         }, {
@@ -112,7 +112,7 @@ export default function MyPage() {
 
       try {
         const response = await axios.patch(ENDPOINTS.UPDATE, {
-          userid: getItem("userid"),
+          username: getItem("username"),
           newEmail
         }, {
           headers: {

@@ -6,15 +6,15 @@ import axios from 'axios';
 import { ENDPOINTS } from '../components/Api';
 
 export default function Register() {
-  const [userid, setUserId] = useState('');
+  const [username, setUserName] = useState('');
   const [password, setPassword] = useState('');
   const [chpassword, setChpassword] = useState('');
   const [email, setEmail] = useState('');
   const navigate = useNavigate();
-  const [isUseridAvailable, setIsUseridAvailable] = useState(null);
-  
-  const checkUserId = async () => {
-    if (!userid) {
+  const [isUsernameAvailable, setIsUserNameAvailable] = useState(null);
+
+  const CHECK_USERNAME = async () => {
+    if (!username) {
       Swal.fire({
         title: "아이디를 입력해주세요.",
         icon: "warning",
@@ -25,10 +25,11 @@ export default function Register() {
     }
 
     try {
-      const response = await axios.post(ENDPOINTS.CHECK_USERID, { userid });
+      const response = await axios.post(ENDPOINTS.CHECK_USERID, { 
+        username: username });
     
       // 이 부분이 true/false 부분이라 이거는 수정 중에 있습니다.
-      setIsUseridAvailable(!response.data); // 중복 여부 설정
+      setIsUserNameAvailable(!response.data); // 중복 여부 설정
       Swal.fire({
         title: response.data ? "아이디가 사용 중입니다." : "사용 가능한 아이디입니다.",
         icon: response.data ? "error" : "success",
@@ -48,7 +49,7 @@ export default function Register() {
   const handleRegister = (e) => {
     e.preventDefault();
 
-    if(!userid || !password || !chpassword || !email) {
+    if(!username || !password || !chpassword || !email) {
       Swal.fire({
         title: "모든 필드를 입력해주세요.",
         icon: "warning",
@@ -70,7 +71,7 @@ export default function Register() {
 
     // 회원가입 API 요청
     axios.post(ENDPOINTS.JOIN, {
-      userid: userid,
+      username: username,
       password: password,
       passwordConfirm: chpassword,
       email: email
@@ -116,10 +117,10 @@ export default function Register() {
           </h5>
           
           <div className="mb-3 w-75">
-            <label htmlFor="userid" className="form-label"></label>
-            <input type="text" className="form-control" style={{ height:'5rem', borderRadius: '15px', fontSize: '20px' }} id="userid" placeholder="아이디를 입력하세요." 
-            value={userid} onChange={(e) => setUserId(e.target.value)}/>
-            <button onClick={checkUserId} className="btn btn-secondary mt-2">중복 확인</button>
+            <label htmlFor="username" className="form-label"></label>
+            <input type="text" className="form-control" style={{ height:'5rem', borderRadius: '15px', fontSize: '20px' }} id="username" placeholder="아이디를 입력하세요." 
+            value={username} onChange={(e) => setUserName(e.target.value)}/>
+            <button onClick={CHECK_USERNAME} className="btn btn-secondary mt-2">중복 확인</button>
           </div>
 
           <div className="mb-3 w-75">

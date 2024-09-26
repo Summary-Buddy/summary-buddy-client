@@ -7,14 +7,14 @@ import { ENDPOINTS } from '../components/Api';
 import { setItem } from '../components/LocalStorageUtils';
 
 export default function Login() {
-  const [userid, setUserId] = useState('');
+  const [username, setUserName] = useState('');
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {
     e.preventDefault();
 
-    if(!userid || !password ) {
+    if(!username || !password ) {
       Swal.fire({
         title: "모든 필드를 입력해주세요.",
         icon: "warning",
@@ -26,8 +26,8 @@ export default function Login() {
 
     try {
       const response = await axios.post(ENDPOINTS.LOGIN, {
-        userid,
-        password
+        "username": username,
+        "password": password
       });
       if (response.data && response.data.token) {
         // 이 부분은 localstorage에 jwtToken을 저장하는 부분입니다.
@@ -37,7 +37,7 @@ export default function Login() {
         const { token } = response.data;
         console.log(token);
         setItem("jwtToken", token);
-        setItem("userid", userid);
+        setItem("username", username);
 
         Swal.fire({
           title: "로그인 성공!",
@@ -85,9 +85,9 @@ export default function Login() {
           </h5>
           
           <div className="mb-3 w-75">
-            <label htmlFor="userid" className="form-label"></label>
+            <label htmlFor="username" className="form-label"></label>
             <input type="text" className="form-control" style={{height:'5rem', borderRadius: '15px', fontSize: '20px' }} id="username" placeholder="아이디를 입력하세요."
-            value={userid} onChange={(e) => setUserId(e.target.value)} />
+            value={username} onChange={(e) => setUserName(e.target.value)} />
           </div>
 
           <div className="mb-3 w-75">
