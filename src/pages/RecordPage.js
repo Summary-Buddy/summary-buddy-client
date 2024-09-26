@@ -55,7 +55,7 @@ const RecordPage = () => {
         Authorization: process.env.REACT_APP_TEMP_AUTH_HEADER // 로그인 구현되면 수정 필요
       }
     });
-    setFilteredMembers(res);
+    setFilteredMembers(res.data);
   }
 
 

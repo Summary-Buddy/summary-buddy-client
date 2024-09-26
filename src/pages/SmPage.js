@@ -25,14 +25,14 @@ export default function SmPage() {
     const res = await client.get('/report', {
         headers: {Authorization: process.env.REACT_APP_TEMP_AUTH_HEADER} // 로그인 구현되면 수정 필요
     });
-    setMeetingMinutes(res);
+    setMeetingMinutes(res.data);
   }
 
   const fetchDetail = async(reportId) => {
     const res = await client.get(`/report/${reportId}`, {
         headers: {Authorization: process.env.REACT_APP_TEMP_AUTH_HEADER} // 로그인 구현되면 수정 필요
     });
-    setSelectedMeeting(res);
+    setSelectedMeeting(res.data);
   }
 
   return (
