@@ -1,7 +1,6 @@
 import '../background.scss';
 import './SmPage.css';
 import React, { useEffect, useState } from 'react';
-import { saveAs } from 'file-saver';
 import { FaFilePdf } from "react-icons/fa6";
 import { client } from '../utils/client';
 import { marked } from 'marked';
@@ -11,12 +10,12 @@ export default function SmPage() {
     const [meetingMinutes, setMeetingMinutes] = useState([]);
 
     // PDF 파일 다운로드
-    const handleDownloadPDF = () => {
-      if (!selectedMeeting) return;
-
-      const blob = new Blob([selectedMeeting.content], { type: 'application/pdf' });
-      saveAs(blob, `${selectedMeeting.title}.pdf`);
-  };
+    const handleDownloadPDF = async(reportId) => {
+        const res = await client.post(`/report/pdf`, {reportId}, {
+            headers: {Authorization: process.env.REACT_APP_TEMP_AUTH_HEADER} // 로그인 구현되면 수정 필요
+        });
+        window.open(res.pdfDownloadUrl, "_blank");
+    };
 
   useEffect(() => {
     fetchDocs();
@@ -27,7 +26,6 @@ export default function SmPage() {
         headers: {Authorization: process.env.REACT_APP_TEMP_AUTH_HEADER} // 로그인 구현되면 수정 필요
     });
     setMeetingMinutes(res);
-    console.log(res);
   }
 
   const fetchDetail = async(reportId) => {
@@ -91,7 +89,7 @@ export default function SmPage() {
                          {/* 다운로드 PDF 버튼을 아이콘과 텍스트 링크로 변경 */}
                          <div className="download-btn">
                             <FaFilePdf />
-                            <a href="#" onClick={handleDownloadPDF} style={{
+                            <a href="#" onClick={() => handleDownloadPDF(selectedMeeting.id)} style={{
                                 fontSize: '1rem',
                                 color: '#007bff',
                                 textDecoration: 'underline',
