@@ -1,7 +1,7 @@
 import React from 'react';
 // import { useEffect, useState } from 'react';
 import '../background.scss';
-import buddy from '../pages/buddy.png'; // 로고 이미지 파일 경로
+import buddy from '../public/buddy-logo.png'; // 로고 이미지 파일 경로
 import { Link } from 'react-router-dom';
 
 export default function Header() {

@@ -2,8 +2,7 @@ import React, { useState } from 'react';
 import '../background.scss';
 import Swal from 'sweetalert2';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
-import { ENDPOINTS } from '../components/Api';
+import { client } from '../utils/client';
 
 export default function Register() {
   const [username, setUserName] = useState('');
@@ -11,42 +10,8 @@ export default function Register() {
   const [chpassword, setChpassword] = useState('');
   const [email, setEmail] = useState('');
   const navigate = useNavigate();
-  const [isUsernameAvailable, setIsUserNameAvailable] = useState(null);
 
-  const CHECK_USERNAME = async () => {
-    if (!username) {
-      Swal.fire({
-        title: "아이디를 입력해주세요.",
-        icon: "warning",
-        confirmButtonColor: '#F7418F',
-        background: 'white'
-      });
-      return;
-    }
-
-    try {
-      const response = await axios.post(ENDPOINTS.CHECK_USERID, { 
-        username: username });
-    
-      // 이 부분이 true/false 부분이라 이거는 수정 중에 있습니다.
-      setIsUserNameAvailable(!response.data); // 중복 여부 설정
-      Swal.fire({
-        title: response.data ? "아이디가 사용 중입니다." : "사용 가능한 아이디입니다.",
-        icon: response.data ? "error" : "success",
-        confirmButtonColor: '#F7418F',
-        background: 'white'
-      });
-    } catch (error) {
-      Swal.fire({
-        title: "서버 오류입니다.",
-        icon: "error",
-        confirmButtonColor: '#F7418F',
-        background: 'white'
-      });
-    }
-  };
-
-  const handleRegister = (e) => {
+  const handleRegister = async(e) => {
     e.preventDefault();
 
     if(!username || !password || !chpassword || !email) {
@@ -69,32 +34,30 @@ export default function Register() {
       return;
     }
 
-    // 회원가입 API 요청
-    axios.post(ENDPOINTS.JOIN, {
+    const body = {
       username: username,
+      email: email,
       password: password,
-      passwordConfirm: chpassword,
-      email: email
-    })
-      .then((response) => {
-        Swal.fire({
-          title: "회원가입 성공!",
-          icon: "success",
-          confirmButtonColor: '#F7418F',
-          background: 'white'
-        }).then(() => {
-          navigate('/Login');
-        });
-      })
-      .catch((error) => {
-        Swal.fire({
-          title: "회원가입 실패",
-          text: error.response ? error.response.data.message : '서버와의 통신 중 문제가 발생했습니다.',
-          icon: "error",
-          confirmButtonColor: '#F7418F',
-          background: 'white'
-        });
+      passwordConfirm: chpassword
+    }
+
+    const res = await fetch(process.env.REACT_APP_SERVER_API_URL + `/member/join`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      }, // 로그인 구현되면 수정 필요
+      body: JSON.stringify(body)
+    });
+    if(res.ok) {
+      Swal.fire({
+        title: "회원가입 성공!",
+        icon: "success",
+        confirmButtonColor: '#F7418F', // 버튼 색상 변경
+        background: 'white' // 알림창 배경색 변경
+      }).then(() => {
+        navigate('/Login');
       });
+    }
   }
 
 
