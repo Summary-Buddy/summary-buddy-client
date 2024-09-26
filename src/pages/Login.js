@@ -37,6 +37,7 @@ export default function Login() {
         const { token } = response.data;
         console.log(token);
         setItem("jwtToken", token);
+        setItem("username", username);
 
         Swal.fire({
           title: "로그인 성공!",
