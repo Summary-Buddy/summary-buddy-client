@@ -3,54 +3,32 @@ import React, { useState } from 'react';
 import { Container, Card, Form, Button } from 'react-bootstrap';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import './RecordPage.css';
-
+import { client } from '../utils/client';
 
 const RecordPage = () => {
-  // 회원 데이터 (예시 데이터)
-  const members = [
-    '김철수',
-    '박영희',
-    '이민호',
-    '홍길동',
-    '강수진',
-    '최준호',
-    '김지수',
-    '이수민',
-    '한가영',
-    '윤종훈',
-    'qwerqwer',
-    'qwerqwer1'
-  ];
-
-  
   // 상태 관리
   const [searchTerm, setSearchTerm] = useState('');
   const [filteredMembers, setFilteredMembers] = useState([]);
-  const [selectedMembers, setSelectedMembers] = useState([]); // 클릭된 회원들을 배열로 저장
+  const [selectedMemberUsernames, setSelectedMemberUsernames] = useState([]); // 클릭된 회원들을 배열로 저장
   const [isRecording, setIsRecording] = useState(false); // 녹음 상태 관리
 
   // 검색어 입력 처리 함수
   const handleSearchChange = (event) => {
     const value = event.target.value;
+    searchMember(value);
     setSearchTerm(value);
-
-    // 필터링된 회원 목록 업데이트
-    const filtered = value
-      ? members.filter((member) => member.includes(value)) // 검색어가 있으면 필터링
-      : []; // 검색어가 없으면 빈 배열
-    setFilteredMembers(filtered);
   };
 
   // 회원 카드 클릭 처리 함수 (플러스 아이콘과 통합)
   const handleMemberClick = (member) => {
-    if (member && !selectedMembers.includes(member)) {
-      setSelectedMembers((prevSelected) => [...prevSelected, member]); // 이전 상태를 기반으로 업데이트
+    if (member && !selectedMemberUsernames.includes(member)) {
+      setSelectedMemberUsernames((prevSelected) => [...prevSelected, member.username]); // 이전 상태를 기반으로 업데이트
     }
   };
 
   // 회원 카드 삭제 처리 함수
   const handleRemoveMember = (member) => {
-    setSelectedMembers((prevSelected) => prevSelected.filter((m) => m !== member)); // 선택된 회원 제거
+    setSelectedMemberUsernames((prevSelected) => prevSelected.filter((m) => m !== member)); // 선택된 회원 제거
   };
 
   // 음성 녹음 저장 처리 함수
@@ -70,6 +48,15 @@ const RecordPage = () => {
       alert('녹음을 중지합니다.');
     }
   };
+
+  const searchMember = async(query) => {
+    const res = await client.get(`/member/search?query=${query}`, {
+      headers: {
+        Authorization: process.env.REACT_APP_TEMP_AUTH_HEADER // 로그인 구현되면 수정 필요
+      }
+    });
+    setFilteredMembers(res);
+  }
 
 
   return (
@@ -124,10 +111,10 @@ const RecordPage = () => {
                   >
                     <Card.Body style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                       <Card.Text className="fw-bold" style={{ margin: 0, flex: '1', textAlign: 'center' }}>
-                        {member}
+                        {member.username}
                       </Card.Text>
                       {/* 추가된 회원이 아닌 경우에만 플러스 아이콘 표시 */}
-                      {!selectedMembers.includes(member) && (
+                      {!selectedMemberUsernames.includes(member.username) && (
                         <i className="bi bi-plus-circle" 
                           onClick={(e) => {
                             e.stopPropagation(); // 부모 요소의 클릭 이벤트 중지
@@ -174,9 +161,9 @@ const RecordPage = () => {
           justifyContent: 'flex-start', // 카드들을 왼쪽 정렬
           padding: '0 10px', // 좌우 패딩 추가
       }}>
-        {selectedMembers.length > 0 && (
+        {selectedMemberUsernames.length > 0 && (
           <>
-            {selectedMembers.map((member, index) => (
+            {selectedMemberUsernames.map((username, index) => (
               <div key={index} style={{ 
                   margin: '10px 0 5px',
                   marginLeft: '5px',
@@ -195,7 +182,7 @@ const RecordPage = () => {
                       variant="link" // 링크 스타일로 설정
                       onClick={(e) => {
                         e.stopPropagation(); // 클릭 이벤트 전파 방지
-                        handleRemoveMember(member);
+                        handleRemoveMember(username);
                       }}
                       style={{
                         position: 'absolute',
@@ -220,7 +207,7 @@ const RecordPage = () => {
                         whiteSpace: 'nowrap', // 텍스트를 한 줄로 제한
                       }}
                     >
-                      {member}
+                      {username}
                     </Card.Text>
                   </Card.Body>
                 </Card>
