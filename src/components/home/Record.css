@@ -1,0 +1,24 @@
+.record-section {
+  padding: 5rem 10rem;
+}
+
+.record-container {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
+
+.record-content {
+  background-color: white;
+  opacity: 70%;
+  padding: 3rem;
+  border-radius: 20px;
+}
+
+.record-text {
+  font-size: 1.2rem;
+}
+
+.record-text:last-child {
+  margin-bottom: 0rem;
+}

@@ -1,0 +1,29 @@
+.start-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 5rem 10rem;
+}
+
+.start-btn {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #FC819E;
+  padding: 1rem 2rem;
+  border-radius: 15px;
+  cursor: pointer;
+  transition: all 1s ease;
+}
+
+.start-text {
+  font-size: 2rem;
+  font-weight: 800;
+  color: white;
+  margin-bottom: 0;
+  transition: all 1s ease;
+}
+
+.start-btn:hover {
+  background-color: #F7418F;
+}
