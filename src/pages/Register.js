@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import '../background.scss';
 import Swal from 'sweetalert2';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
-import { ENDPOINTS } from '../components/Api';
+// import axios from 'axios';
+// import { ENDPOINTS } from '../components/Api';
 
 export default function Register() {
   const [username, setUsername] = useState('');
@@ -11,7 +11,7 @@ export default function Register() {
   const [chpassword, setChpassword] = useState('');
   const [email, setEmail] = useState('');
   const navigate = useNavigate();
-  const [isUsernameAvailable, setIsUsernameAvailable] = useState(null);
+  // const [isUsernameAvailable, setIsUsernameAvailable] = useState(null);
 
   const checkUsername = async () => {
     if (!username) {
@@ -24,23 +24,25 @@ export default function Register() {
       return;
     }
 
-    try {
-      const response = await axios.post(ENDPOINTS.CHECK_USERNAME, { username });
-      setIsUsernameAvailable(!response.data); // 중복 여부 설정
-      Swal.fire({
-        title: response.data ? "아이디가 사용 중입니다." : "사용 가능한 아이디입니다.",
-        icon: response.data ? "error" : "success",
-        confirmButtonColor: '#F7418F',
-        background: 'white'
-      });
-    } catch (error) {
-      Swal.fire({
-        title: "서버 오류입니다.",
-        icon: "error",
-        confirmButtonColor: '#F7418F',
-        background: 'white'
-      });
-    }
+    // try {
+    //   const response = await axios.post(ENDPOINTS.CHECK_USERNAME, { username });
+    //
+    //   // 이 부분이 true/false 부분이라 이거는 수정 중에 있습니다.
+    //   setIsUsernameAvailable(!response.data); // 중복 여부 설정
+    //   Swal.fire({
+    //     title: response.data ? "아이디가 사용 중입니다." : "사용 가능한 아이디입니다.",
+    //     icon: response.data ? "error" : "success",
+    //     confirmButtonColor: '#F7418F',
+    //     background: 'white'
+    //   });
+    // } catch (error) {
+    //   Swal.fire({
+    //     title: "서버 오류입니다.",
+    //     icon: "error",
+    //     confirmButtonColor: '#F7418F',
+    //     background: 'white'
+    //   });
+    // }
   };
 
   const handleRegister = (e) => {
@@ -66,32 +68,32 @@ export default function Register() {
       return;
     }
 
-    // 회원가입 API 요청
-    axios.post(ENDPOINTS.JOIN, {
-      username: username,
-      password: password,
-      passwordConfirm: chpassword,
-      email: email
-    })
-      .then((response) => {
-        Swal.fire({
-          title: "회원가입 성공!",
-          icon: "success",
-          confirmButtonColor: '#F7418F',
-          background: 'white'
-        }).then(() => {
-          navigate('/Login');
-        });
-      })
-      .catch((error) => {
-        Swal.fire({
-          title: "회원가입 실패",
-          text: error.response ? error.response.data.message : '서버와의 통신 중 문제가 발생했습니다.',
-          icon: "error",
-          confirmButtonColor: '#F7418F',
-          background: 'white'
-        });
-      });
+    // // 회원가입 API 요청
+    // axios.post(ENDPOINTS.JOIN, {
+    //   username: username,
+    //   password: password,
+    //   passwordConfirm: chpassword,
+    //   email: email
+    // })
+    //   .then((response) => {
+    //     Swal.fire({
+    //       title: "회원가입 성공!",
+    //       icon: "success",
+    //       confirmButtonColor: '#F7418F',
+    //       background: 'white'
+    //     }).then(() => {
+    //       navigate('/Login');
+    //     });
+    //   })
+    //   .catch((error) => {
+    //     Swal.fire({
+    //       title: "회원가입 실패",
+    //       text: error.response ? error.response.data.message : '서버와의 통신 중 문제가 발생했습니다.',
+    //       icon: "error",
+    //       confirmButtonColor: '#F7418F',
+    //       background: 'white'
+    //     });
+    //   });
   }
 
 
@@ -118,7 +120,7 @@ export default function Register() {
             <label htmlFor="username" className="form-label"></label>
             <input type="text" className="form-control" style={{ height:'5rem', borderRadius: '15px', fontSize: '20px' }} id="username" placeholder="아이디를 입력하세요." 
             value={username} onChange={(e) => setUsername(e.target.value)}/>
-            <button onClick={checkUsername} className="btn btn-secondary mt-2">중복 확인</button>
+            {/* <button onClick={checkUsername} className="btn btn-secondary mt-2">중복 확인</button> */}
           </div>
 
           <div className="mb-3 w-75">

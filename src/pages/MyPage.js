@@ -3,9 +3,9 @@ import { Container, Form, Button, Row, Col } from 'react-bootstrap';
 import './MyPage.css';
 import '../background.scss';
 import Swal from 'sweetalert2';
-import axios from 'axios';
-import { ENDPOINTS } from '../components/Api';
-import { getItem } from '../components/LocalStorageUtils';
+// import axios from 'axios';
+// import { ENDPOINTS } from '../components/Api';
+// import { getItem } from '../components/LocalStorageUtils';
 
 
 export default function MyPage() {
@@ -42,45 +42,45 @@ export default function MyPage() {
         return;
       } 
       
-      const jwtToken = getItem('jwtToken');
+      // const jwtToken = getItem('jwtToken');
 
-      try {
-        const response = await axios.patch(ENDPOINTS.UPDATE, {
-          username: getItem("username"),
-          newPassword,
-          newPasswordConfirm : confirmPassword
-        }, {
-          headers: {
-            Authorization: `${jwtToken}`
-          }
-        });
-        if (response.data.success) { // 성공 여부 확인
-          Swal.fire({
-            title: "비밀번호 변경 성공!",
-            icon: "success",
-            confirmButtonColor: '#F7418F', // 버튼 색상 변경
-            background: 'white' // 알림창 배경색 변경
-          });
-          // 상태 초기화
-          setNewPassword('');
-          setConfirmPassword('');
-        } else {
-          // 실패 시 메시지 표시
-          Swal.fire({
-            title: "비밀번호 변경 실패: " + response.data.message,
-            icon: "error",
-            confirmButtonColor: '#F7418F',
-            background: 'white'
-          });
-        }
-      } catch (error) {
-        Swal.fire({
-          title: "서버 오류입니다.",
-          icon: "error",
-          confirmButtonColor: '#F7418F',
-          background: 'white'
-        });
-      }
+      // try {
+      //   const response = await axios.patch(ENDPOINTS.UPDATE, {
+      //     username: getItem("username"),
+      //     newPassword,
+      //     newPasswordConfirm : confirmPassword
+      //   }, {
+      //     headers: {
+      //       Authorization: `${jwtToken}`
+      //     }
+      //   });
+      //   if (response.data.success) { // 성공 여부 확인
+      //     Swal.fire({
+      //       title: "비밀번호 변경 성공!",
+      //       icon: "success",
+      //       confirmButtonColor: '#F7418F', // 버튼 색상 변경
+      //       background: 'white' // 알림창 배경색 변경
+      //     });
+      //     // 상태 초기화
+      //     setNewPassword('');
+      //     setConfirmPassword('');
+      //   } else {
+      //     // 실패 시 메시지 표시
+      //     Swal.fire({
+      //       title: "비밀번호 변경 실패: " + response.data.message,
+      //       icon: "error",
+      //       confirmButtonColor: '#F7418F',
+      //       background: 'white'
+      //     });
+      //   }
+      // } catch (error) {
+      //   Swal.fire({
+      //     title: "서버 오류입니다.",
+      //     icon: "error",
+      //     confirmButtonColor: '#F7418F',
+      //     background: 'white'
+      //   });
+      // }
     };
   
     // 이메일 변경 핸들러
@@ -110,42 +110,42 @@ export default function MyPage() {
         return;
       }
 
-      const jwtToken = getItem('jwtToken');
+      // const jwtToken = getItem('jwtToken');
 
-      try {
-        const response = await axios.patch(ENDPOINTS.UPDATE, {
-          username: getItem("username"),
-          newEmail
-        }, {
-          headers: {
-            Authorization: `${jwtToken}`
-          }
-        });
-        if (response.data.success) { // 성공 여부 확인
-          Swal.fire({
-            title: "이메일 변경 성공!",
-            icon: "success",
-            confirmButtonColor: '#F7418F', // 버튼 색상 변경
-            background: 'white' // 알림창 배경색 변경
-          });
-          setNewEmail(''); // 입력 필드 초기화
-        } else {
-          // 실패 시 메시지 표시
-          Swal.fire({
-            title: "이메일 변경 실패: " + response.data.message,
-            icon: "error",
-            confirmButtonColor: '#F7418F',
-            background: 'white'
-          });
-        }
-      } catch (error) {
-        Swal.fire({
-          title: "서버 오류입니다.",
-          icon: "error",
-          confirmButtonColor: '#F7418F',
-          background: 'white'
-        });
-      }
+      // try {
+      //   const response = await axios.patch(ENDPOINTS.UPDATE, {
+      //     username: getItem("username"),
+      //     newEmail
+      //   }, {
+      //     headers: {
+      //       Authorization: `${jwtToken}`
+      //     }
+      //   });
+      //   if (response.data.success) { // 성공 여부 확인
+      //     Swal.fire({
+      //       title: "이메일 변경 성공!",
+      //       icon: "success",
+      //       confirmButtonColor: '#F7418F', // 버튼 색상 변경
+      //       background: 'white' // 알림창 배경색 변경
+      //     });
+      //     setNewEmail(''); // 입력 필드 초기화
+      //   } else {
+      //     // 실패 시 메시지 표시
+      //     Swal.fire({
+      //       title: "이메일 변경 실패: " + response.data.message,
+      //       icon: "error",
+      //       confirmButtonColor: '#F7418F',
+      //       background: 'white'
+      //     });
+      //   }
+      // } catch (error) {
+      //   Swal.fire({
+      //     title: "서버 오류입니다.",
+      //     icon: "error",
+      //     confirmButtonColor: '#F7418F',
+      //     background: 'white'
+      //   });
+      // }
     };
 
   return (
