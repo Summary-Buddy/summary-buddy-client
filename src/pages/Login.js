@@ -2,13 +2,16 @@ import React, { useState } from 'react';
 import '../background.scss';
 import Swal from 'sweetalert2';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import { ENDPOINTS } from '../components/Api';
+import { setItem } from '../components/LocalStorageUtils';
 
 export default function Login() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
 
     if(!username || !password ) {
@@ -21,14 +24,46 @@ export default function Login() {
       return;
     }
 
-      Swal.fire({
-        title: "로그인 성공!",
-        icon: "success",
-        confirmButtonColor: '#F7418F', // 버튼 색상 변경
-        background: 'white' // 알림창 배경색 변경
-      }).then(() => {
-        navigate('/');  // 홈 페이지로 리다이렉트
+    try {
+      const response = await axios.post(ENDPOINTS.LOGIN, {
+        username,
+        password
       });
+      if (response.data && response.data.token) {
+        // 이 부분은 localstorage에 jwtToken을 저장하는 부분입니다.
+        // localstorage에 임시로 저장하는 형태로 가져왔으나
+        // 해당 부분은 논의가 필요할꺼 같아 주석을 남겨둡니다.
+        // key는 jwtToken 입니다.
+        const { token } = response.data;
+        console.log(token);
+        setItem("jwtToken", token);
+
+        Swal.fire({
+          title: "로그인 성공!",
+          icon: "success",
+          confirmButtonColor: '#F7418F',
+          background: 'white'
+        }).then(() => {
+          navigate('/'); 
+        });
+      } else {
+        // 토큰이 없을 경우
+        Swal.fire({
+          title: "로그인 실패: 유효하지 않은 응답입니다.",
+          icon: "error",
+          confirmButtonColor: '#F7418F',
+          background: 'white'
+        });
+      }
+    } catch (error) {
+      const errorMessage = error.response?.data?.message || "서버 오류입니다.";
+      Swal.fire({
+        title: "로그인 실패: " + errorMessage,
+        icon: "error",
+        confirmButtonColor: '#F7418F',
+        background: 'white'
+      });
+    }
   }
 
 

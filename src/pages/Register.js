@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import '../background.scss';
 import Swal from 'sweetalert2';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import { ENDPOINTS } from '../components/Api';
 
 export default function Register() {
   const [username, setUsername] = useState('');
@@ -33,15 +35,35 @@ export default function Register() {
       return;
     }
 
-    Swal.fire({
-      title: "회원가입 성공!",
-      icon: "success",
-      confirmButtonColor: '#F7418F', // 버튼 색상 변경
-      background: 'white' // 알림창 배경색 변경
-    }).then(() => {
-      navigate('/Login');
-    });
+    // 회원가입 API 요청
+    axios.post(ENDPOINTS.JOIN, {
+      username: username,
+      password: password,
+      passwordConfirm: chpassword,
+      email: email
+    })
+      .then((response) => {
+        Swal.fire({
+          title: "회원가입 성공!",
+          icon: "success",
+          confirmButtonColor: '#F7418F',
+          background: 'white'
+        }).then(() => {
+          navigate('/Login');
+        });
+      })
+      .catch((error) => {
+        Swal.fire({
+          title: "회원가입 실패",
+          text: error.response ? error.response.data.message : '서버와의 통신 중 문제가 발생했습니다.',
+          icon: "error",
+          confirmButtonColor: '#F7418F',
+          background: 'white'
+        });
+      });
   }
+
+
 
   return (
     <div className='app-container'>
