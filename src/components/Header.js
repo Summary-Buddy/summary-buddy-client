@@ -3,7 +3,6 @@ import React from 'react';
 import '../background.scss';
 import buddy from '../pages/buddy.png'; // 로고 이미지 파일 경로
 import { Link } from 'react-router-dom';
-import { useState } from 'react';
 
 export default function Header() {
 

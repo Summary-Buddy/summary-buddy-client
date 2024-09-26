@@ -2,18 +2,53 @@ import React, { useState } from 'react';
 import '../background.scss';
 import Swal from 'sweetalert2';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import { ENDPOINTS } from '../components/Api';
 
 export default function Register() {
-  const [username, setUsername] = useState('');
+  const [userid, setUserId] = useState('');
   const [password, setPassword] = useState('');
   const [chpassword, setChpassword] = useState('');
   const [email, setEmail] = useState('');
   const navigate = useNavigate();
+  const [isUseridAvailable, setIsUseridAvailable] = useState(null);
+  
+  const checkUserId = async () => {
+    if (!userid) {
+      Swal.fire({
+        title: "아이디를 입력해주세요.",
+        icon: "warning",
+        confirmButtonColor: '#F7418F',
+        background: 'white'
+      });
+      return;
+    }
+
+    try {
+      const response = await axios.post(ENDPOINTS.CHECK_USERID, { userid });
+    
+      // 이 부분이 true/false 부분이라 이거는 수정 중에 있습니다.
+      setIsUseridAvailable(!response.data); // 중복 여부 설정
+      Swal.fire({
+        title: response.data ? "아이디가 사용 중입니다." : "사용 가능한 아이디입니다.",
+        icon: response.data ? "error" : "success",
+        confirmButtonColor: '#F7418F',
+        background: 'white'
+      });
+    } catch (error) {
+      Swal.fire({
+        title: "서버 오류입니다.",
+        icon: "error",
+        confirmButtonColor: '#F7418F',
+        background: 'white'
+      });
+    }
+  };
 
   const handleRegister = (e) => {
     e.preventDefault();
 
-    if(!username || !password || !chpassword || !email) {
+    if(!userid || !password || !chpassword || !email) {
       Swal.fire({
         title: "모든 필드를 입력해주세요.",
         icon: "warning",
@@ -33,15 +68,34 @@ export default function Register() {
       return;
     }
 
-    Swal.fire({
-      title: "회원가입 성공!",
-      icon: "success",
-      confirmButtonColor: '#F7418F', // 버튼 색상 변경
-      background: 'white' // 알림창 배경색 변경
-    }).then(() => {
-      navigate('/Login');
-    });
+    // 회원가입 API 요청
+    axios.post(ENDPOINTS.JOIN, {
+      userid: userid,
+      password: password,
+      passwordConfirm: chpassword,
+      email: email
+    })
+      .then((response) => {
+        Swal.fire({
+          title: "회원가입 성공!",
+          icon: "success",
+          confirmButtonColor: '#F7418F',
+          background: 'white'
+        }).then(() => {
+          navigate('/Login');
+        });
+      })
+      .catch((error) => {
+        Swal.fire({
+          title: "회원가입 실패",
+          text: error.response ? error.response.data.message : '서버와의 통신 중 문제가 발생했습니다.',
+          icon: "error",
+          confirmButtonColor: '#F7418F',
+          background: 'white'
+        });
+      });
   }
+
 
   return (
     <div className='app-container'>
@@ -62,9 +116,10 @@ export default function Register() {
           </h5>
           
           <div className="mb-3 w-75">
-            <label htmlFor="username" className="form-label"></label>
-            <input type="text" className="form-control" style={{ height:'5rem', borderRadius: '15px', fontSize: '20px' }} id="username" placeholder="아이디를 입력하세요." 
-            value={username} onChange={(e) => setUsername(e.target.value)}/>
+            <label htmlFor="userid" className="form-label"></label>
+            <input type="text" className="form-control" style={{ height:'5rem', borderRadius: '15px', fontSize: '20px' }} id="userid" placeholder="아이디를 입력하세요." 
+            value={userid} onChange={(e) => setUserId(e.target.value)}/>
+            <button onClick={checkUserId} className="btn btn-secondary mt-2">중복 확인</button>
           </div>
 
           <div className="mb-3 w-75">
