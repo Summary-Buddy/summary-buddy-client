@@ -31,6 +31,7 @@ const RecordPage = () => {
   const [isRecording, setIsRecording] = useState(false); // 녹음 상태 관리
   const mediaRecorderRef = useRef(null); // 미디어 레코더를 저장할 ref
   const audioChunksRef = useRef([]); // 오디오 청크를 저장할 ref
+  // const [memberNames, setMemberNames] = useState([]); // 회원 이름 배열 상태
 
   // 검색어 입력 처리 함수
   const handleSearchChange = (event) => {
@@ -66,27 +67,63 @@ const RecordPage = () => {
       // WAV로 변환
       const wavBlob = convertToWav(audioBuffer);
 
-      // FormData에 변환된 WAV 파일 추가
+      // 서버에 파일 전송
     const formData = new FormData();
-    formData.append('file', wavBlob, 'recording.wav'); // 'recording.wav'라는 이름으로 서버에 파일 전송
+    formData.append('file', wavBlob, 'recording.wav'); // WAV 파일 추가
+
+    // 회원 이름 배열 생성
+    const membersJson = JSON.stringify(selectedMembers); // 추가된 회원 이름 배열을 JSON 형식으로 변환
+    formData.append('members', new Blob([membersJson], { type: 'application/json' })); // JSON 데이터 추가
+
+    //   // 회원 이름 JSON 파일 생성
+    //   const jsonBlob = new Blob([JSON.stringify({ members: memberNames })], { type: 'application/json' });
+
+    //   // FormData에 변환된 WAV 파일 추가
+    // const formData = new FormData();
+    // formData.append('file', wavBlob, 'recording.wav'); // 'recording.wav'라는 이름으로 서버에 파일 전송
+    // formData.append('membersFile', jsonBlob, 'members.json'); // JSON 파일 추가
     
     // 서버로 전송
     fetch('http://localhost:8080/api/report', {
       method: 'POST',
-      body: formData,
-      headers: { 
-        // 헤더  추가
+      body: formData, // formData에 음성 파일과 회원 정보가 포함되어 있다고 가정
+      headers: {
+        // 필요하다면 여기에 추가적인 헤더를 추가
+        // 예: 'Authorization': `Bearer ${token}`
       },
     })
-    .then(response => response.json())
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('네트워크 응답이 올바르지 않습니다.');
+      }
+      return response.json(); // JSON 형식으로 응답을 받음
+    })
     .then(data => {
       console.log('Success:', data);
-      alert('녹음 파일이 성공적으로 서버에 전송되었습니다.');
+      alert('녹음 파일과 회원 정보가 성공적으로 전송되었습니다.');
     })
-    .catch((error) => {
-      console.error('Error:', error);
+    .catch(error => {
+      console.error('파일 전송 중 오류 발생:', error);
       alert('녹음 파일 전송에 실패했습니다.');
     });
+
+    // // 서버로 전송
+    // fetch('http://localhost:8080/api/report', {
+    //   method: 'POST',
+    //   body: formData,
+    //   headers: { 
+    //     // 헤더  추가
+    //   },
+    // })
+    // .then(response => response.json())
+    // .then(data => {
+    //   console.log('Success:', data);
+    //   alert('녹음 파일과 회원 정보가 성공적으로 전송되었습니다.');
+    // })
+    // .catch((error) => {
+    //   console.error('Error:', error);
+    //   alert('녹음 파일 전송에 실패했습니다.');
+    // });
   };
 
     fileReader.readAsArrayBuffer(audioBlob); // Blob을 ArrayBuffer로 읽음
