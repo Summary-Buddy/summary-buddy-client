@@ -41,18 +41,8 @@ export default function Register() {
       passwordConfirm: chpassword
     }
 
-    console.log(body);
-
-    const res = await fetch(
-      //process.env.REACT_APP_SERVER_API_URL + 
-      `http://localhost:8080/api/member/join`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      }, // 로그인 구현되면 수정 필요
-      body: JSON.stringify(body)
-    });
-    if(res.ok) {
+    const res = await client.post(`/member/join`, body);
+    if(res.status === 200) {
       Swal.fire({
         title: "회원가입 성공!",
         icon: "success",

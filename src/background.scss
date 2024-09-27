@@ -11,7 +11,6 @@ html, body {
 
 .app-container {
   background-color: $primary;
-  min-height: 100vh;  /* 화면 전체 높이를 항상 유지 */
   display: flex;
   justify-content: center; /* 수평 중앙 정렬 (필요 시) */
   align-items: center; /* 수직 중앙 정렬 (필요 시) */

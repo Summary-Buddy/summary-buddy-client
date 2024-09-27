@@ -3,11 +3,11 @@ export async function client(endpoint, { body, ...customConfig } = {}) {
   const headers = { 'Content-Type': 'application/json' };
 
   const config = {
-    method: body ? 'POST' : 'GET',
     ...customConfig,
     headers: {
       ...headers,
       ...customConfig.headers,
+      Authorization: process.env.REACT_APP_TEMP_AUTH_HEADER // 로그인 구현되면 수정 필요
     },
   }
 
@@ -33,5 +33,9 @@ client.get = function (endpoint, customConfig = {}) {
 }
 
 client.post = function (endpoint, body, customConfig = {}) {
-  return client(endpoint, { ...customConfig, body });
+  return client(endpoint, { ...customConfig, method: 'POST', body });
+}
+
+client.patch = function (endpoint, body, customConfig = {}) {
+  return client(endpoint, {...customConfig, method: 'PATCH', body});
 }
