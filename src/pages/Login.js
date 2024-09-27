@@ -26,7 +26,7 @@ export default function Login() {
       const res = await client.post(`/member/login`, { username, password });
       if (res.status === 200) {
         localStorage.setItem("jwtToken", res.data.token);
-        localStorage.setItem("username", username);
+        localStorage.setItem("userId", res.data.id);
 
         Swal.fire({
           title: "로그인 성공!",
