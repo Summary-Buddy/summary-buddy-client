@@ -1,5 +1,5 @@
 import '../background.scss';
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { Container, Card, Form, Button } from 'react-bootstrap';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import './RecordPage.css';
@@ -8,12 +8,17 @@ import { useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
 
 
+
+
 const RecordPage = () => {
   // 상태 관리
   const [searchTerm, setSearchTerm] = useState('');
   const [filteredMembers, setFilteredMembers] = useState([]);
   const [selectedMemberUsernames, setSelectedMemberUsernames] = useState([]); // 클릭된 회원들을 배열로 저장
   const [isRecording, setIsRecording] = useState(false); // 녹음 상태 관리
+  const mediaRecorderRef = useRef(null); // 미디어 레코더를 저장할 ref
+  const audioChunksRef = useRef([]); // 오디오 청크를 저장할 ref
+  // const [memberNames, setMemberNames] = useState([]); // 회원 이름 배열 상태
 
 
   const navigate = useNavigate();
@@ -45,17 +50,108 @@ const RecordPage = () => {
 
   // 음성 녹음 저장 처리 함수
   const handleSaveRecording = () => {
-    alert('회의 내용을 저장합니다.');
-    // 파일 저장 로직 추가 가능
+    // WAV 변환 후 저장 로직
+    const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/webm' }); // webm 파일로 변환
+    const fileReader = new FileReader();
+    fileReader.onloadend = () => {
+      const audioBuffer = fileReader.result; // 파일 데이터를 가져옴
+      // WAV로 변환
+      const wavBlob = convertToWav(audioBuffer);
+
+      // 서버에 파일 전송
+    const formData = new FormData();
+    formData.append('file', wavBlob, 'recording.wav'); // WAV 파일 추가
+
+    // 회원 이름 배열 생성
+    const membersJson = JSON.stringify({
+      // selectedMemberUsernames      
+      memberIdList: selectedMemberUsernames // 배열 형태로 memberIdList를 포함
+    }); // 추가된 회원 배열을 JSON 형식으로 변환
+    formData.append('content', new Blob([membersJson], { type: 'application/json' })); // JSON 데이터 추가
+
+    //   // 회원 이름 JSON 파일 생성
+    //   const jsonBlob = new Blob([JSON.stringify({ members: memberNames })], { type: 'application/json' });
+
+    //   // FormData에 변환된 WAV 파일 추가
+    // const formData = new FormData();
+    // formData.append('file', wavBlob, 'recording.wav'); // 'recording.wav'라는 이름으로 서버에 파일 전송
+    // formData.append('membersFile', jsonBlob, 'members.json'); // JSON 파일 추가
+    
+    // 서버로 전송
+    fetch('http://localhost:8080/api/report', {
+      method: 'POST',
+      body: formData, // formData에 음성 파일과 회원 정보가 포함되어 있다고 가정
+      headers: {
+        // 'content': {membersJson} ,
+        // 'Content-Type': 'multipart/form-data',
+        // 필요하다면 여기에 추가적인 헤더를 추가
+        'Authorization': `Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIzMzMiLCJpc3MiOiJzdW1tYXJ5IGJ1ZGR5IiwiaWF0IjoxNzI3NDE1NTk1LCJleHAiOjE3Mjc0MTkxOTV9.47SZgczpG253dE5gvOKlXGnDyj6Ho9qejzTcBEsLPy998h8NJ3g_xHEYjmG_N0BmtqQj5ti2SBCKHF3IcyuZAA`
+      },
+    })
+    .then(response => {
+      console.log(response)
+      if (!response.ok) {
+        throw new Error('네트워크 응답이 올바르지 않습니다.');
+      }
+      return response.json(); // JSON 형식으로 응답을 받음
+    })
+    .then(data => {
+      console.log('Success:', data);
+      alert('녹음 파일과 회원 정보가 성공적으로 전송되었습니다.');
+    })
+    .catch(error => {
+      console.log(formData.values())
+      console.log(membersJson)
+      console.error('파일 전송 중 오류 발생:', error);
+      alert('녹음 파일 전송에 실패했습니다.');
+    });
+
+    // // 서버로 전송
+    // fetch('http://localhost:8080/api/report', {
+    //   method: 'POST',
+    //   body: formData,
+    //   headers: { 
+    //     // 헤더  추가
+    //   },
+    // })
+    // .then(response => response.json())
+    // .then(data => {
+    //   console.log('Success:', data);
+    //   alert('녹음 파일과 회원 정보가 성공적으로 전송되었습니다.');
+    // })
+    // .catch((error) => {
+    //   console.error('Error:', error);
+    //   alert('녹음 파일 전송에 실패했습니다.');
+    // });
+  };
+
+    fileReader.readAsArrayBuffer(audioBlob); // Blob을 ArrayBuffer로 읽음
+  };
+
+  const convertToWav = (audioBuffer) => {
+    // WAV 변환 로직 구현
+    // 구현 예시: audioBuffer에서 WAV Blob 생성
+    const wavBlob = new Blob([audioBuffer], { type: 'audio/wav' }); // WAV로 변환
+    return wavBlob;
   };
 
   // 녹음 시작/중지 처리 함수
-  const handleRecordingToggle = () => {
-    setIsRecording((prevIsRecording) => !prevIsRecording); // 함수형 업데이트
+  const handleRecordingToggle = async () => {
     if (!isRecording) {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: { channelCount: 1 } }); // 채널 수 1개
+      mediaRecorderRef.current = new MediaRecorder(stream, { mimeType: 'audio/webm' }); // webm 형식으로 녹음
+      mediaRecorderRef.current.ondataavailable = (event) => {
+        if (event.data.size > 0) {
+          audioChunksRef.current.push(event.data); // 오디오 청크 저장
+        }
+      };
+      mediaRecorderRef.current.start();
+      setIsRecording(true);
       console.log('녹음 시작');
       alert('녹음을 시작합니다.');
     } else {
+      mediaRecorderRef.current.stop();
+      setIsRecording(false);
       console.log('녹음 중지');
       alert('녹음을 중지합니다.');
     }
