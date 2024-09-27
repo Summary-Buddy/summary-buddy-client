@@ -41,7 +41,11 @@ export default function Register() {
       passwordConfirm: chpassword
     }
 
-    const res = await fetch(process.env.REACT_APP_SERVER_API_URL + `/member/join`, {
+    console.log(body);
+
+    const res = await fetch(
+      //process.env.REACT_APP_SERVER_API_URL + 
+      `http://localhost:8080/api/member/join`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -83,7 +87,6 @@ export default function Register() {
             <label htmlFor="username" className="form-label"></label>
             <input type="text" className="form-control" style={{ height:'5rem', borderRadius: '15px', fontSize: '20px' }} id="username" placeholder="아이디를 입력하세요." 
             value={username} onChange={(e) => setUserName(e.target.value)}/>
-            <button onClick={CHECK_USERNAME} className="btn btn-secondary mt-2">중복 확인</button>
           </div>
 
           <div className="mb-3 w-75">

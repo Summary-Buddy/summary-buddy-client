@@ -6,6 +6,8 @@ import Swal from 'sweetalert2';
 import axios from 'axios';
 import { ENDPOINTS } from '../components/Api';
 import { getItem } from '../components/LocalStorageUtils';
+import { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 export default function MyPage() {
   
@@ -13,6 +15,14 @@ export default function MyPage() {
     const [confirmPassword, setConfirmPassword] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
     const [newEmail, setNewEmail] = useState('');
+    const navigate = useNavigate();
+
+    useEffect(() => {
+      const token = localStorage.getItem("jwtToken");
+      if (token == null) {
+        navigate('/Login');
+      }
+    }, []);
   
     // 비밀번호 변경 핸들러
     const handlePasswordSubmit = async (event) => {

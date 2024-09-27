@@ -36,8 +36,10 @@ export default function Login() {
         // key는 jwtToken 입니다.
         const { token } = response.data;
         console.log(token);
-        setItem("jwtToken", token);
-        setItem("username", username);
+        localStorage.setItem("jwtToken", token);
+        localStorage.setItem("username", username);
+
+        
 
         Swal.fire({
           title: "로그인 성공!",
