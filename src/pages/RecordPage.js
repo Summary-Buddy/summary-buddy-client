@@ -73,7 +73,7 @@ const RecordPage = () => {
         // 'content': {membersJson} ,
         // 'Content-Type': 'multipart/form-data',
         // 필요하다면 여기에 추가적인 헤더를 추가
-        'Authorization': `Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIzMzMiLCJpc3MiOiJzdW1tYXJ5IGJ1ZGR5IiwiaWF0IjoxNzI3NDE1NTk1LCJleHAiOjE3Mjc0MTkxOTV9.47SZgczpG253dE5gvOKlXGnDyj6Ho9qejzTcBEsLPy998h8NJ3g_xHEYjmG_N0BmtqQj5ti2SBCKHF3IcyuZAA`
+        'Authorization': `Bearer token`
       },
     })
     .then(response => {
