@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { client } from '../utils/client';
 
 export default function Register() {
-  const [username, setUsername] = useState('');
+  const [username, setUserName] = useState('');
   const [password, setPassword] = useState('');
   const [chpassword, setChpassword] = useState('');
   const [email, setEmail] = useState('');
@@ -54,6 +54,7 @@ export default function Register() {
     }
   }
 
+
   return (
     <div className='app-container'>
       <div className="card w-20 text-center" style={{ 
@@ -75,7 +76,7 @@ export default function Register() {
           <div className="mb-3 w-75">
             <label htmlFor="username" className="form-label"></label>
             <input type="text" className="form-control" style={{ height:'5rem', borderRadius: '15px', fontSize: '20px' }} id="username" placeholder="아이디를 입력하세요." 
-            value={username} onChange={(e) => setUsername(e.target.value)}/>
+            value={username} onChange={(e) => setUserName(e.target.value)}/>
           </div>
 
           <div className="mb-3 w-75">

@@ -2,35 +2,59 @@ import React, { useState } from 'react';
 import '../background.scss';
 import Swal from 'sweetalert2';
 import { useNavigate } from 'react-router-dom';
+import { client } from '../utils/client';
 
 export default function Login() {
-  const [username, setUsername] = useState('');
+  const [username, setUserName] = useState('');
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
 
     if(!username || !password ) {
       Swal.fire({
         title: "모든 필드를 입력해주세요.",
         icon: "warning",
-        confirmButtonColor: '#F7418F', // 버튼 색상 변경
-        background: 'white' // 알림창 배경색 변경
+        confirmButtonColor: '#F7418F',
+        background: 'white'
       });
       return;
-    }
+    };
 
-      Swal.fire({
-        title: "로그인 성공!",
-        icon: "success",
-        confirmButtonColor: '#F7418F', // 버튼 색상 변경
-        background: 'white' // 알림창 배경색 변경
-      }).then(() => {
-        navigate('/');  // 홈 페이지로 리다이렉트
+    try {
+      const res = await fetch(process.env.REACT_APP_SERVER_URL + `/login`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({username: username, password: password})
       });
-  }
+      
+      if (res.ok) {
+        const result = await res.json();
+        localStorage.setItem("jwtToken", result.token);
+        localStorage.setItem("userId", result.id);
 
+        Swal.fire({
+          title: "로그인 성공!",
+          icon: "success",
+          confirmButtonColor: '#F7418F',
+          background: 'white'
+        }).then(() => {
+          navigate('/');
+        });
+      }
+    } catch (error) {
+      Swal.fire({
+        title: "로그인 실패!",
+        text: "아이디 또는 비밀번호를 확인하세요.",
+        icon: "error",
+        confirmButtonColor: '#F7418F',
+        background: 'white'
+      });
+    }
+  };
 
   return (
     <div className='app-container'>
@@ -53,7 +77,7 @@ export default function Login() {
           <div className="mb-3 w-75">
             <label htmlFor="username" className="form-label"></label>
             <input type="text" className="form-control" style={{height:'5rem', borderRadius: '15px', fontSize: '20px' }} id="username" placeholder="아이디를 입력하세요."
-            value={username} onChange={(e) => setUsername(e.target.value)} />
+            value={username} onChange={(e) => setUserName(e.target.value)} />
           </div>
 
           <div className="mb-3 w-75">

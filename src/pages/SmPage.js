@@ -4,10 +4,12 @@ import React, { useEffect, useState } from 'react';
 import { FaFilePdf } from "react-icons/fa6";
 import { client } from '../utils/client';
 import { marked } from 'marked';
+import { useNavigate } from 'react-router-dom';
 
 export default function SmPage() {
     const [selectedMeeting, setSelectedMeeting] = useState(null); // 선택된 회의록을 저장하는 상태
     const [meetingMinutes, setMeetingMinutes] = useState([]);
+    const navigate = useNavigate();
 
     // PDF 파일 다운로드
     const handleDownloadPDF = async(reportId) => {
@@ -16,6 +18,10 @@ export default function SmPage() {
     };
 
   useEffect(() => {
+        const token = localStorage.getItem("jwtToken");
+        if (token == null) {
+          navigate('/Login');
+        }
     fetchDocs();
   }, []);
 

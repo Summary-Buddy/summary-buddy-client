@@ -1,12 +1,28 @@
-import React from 'react';
-// import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import '../background.scss';
 import buddy from '../public/buddy-logo.png'; // 로고 이미지 파일 경로
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 export default function Header() {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [username, setUsername] = useState("");
+  const navigate = useNavigate();
 
+  useEffect(() => {
+    const token = localStorage.getItem("jwtToken");
+    const storedUserId = localStorage.getItem("userId");
+    setUsername(storedUserId);
+    if (token !== null) {
+      setIsLoggedIn(true);
+    }
+  }, []);
 
+  const handleLogout = () => {
+    localStorage.removeItem("jwtToken");
+    localStorage.removeItem("userId");
+    setIsLoggedIn(false);
+    navigate("/Login"); // 로그아웃 후 로그인 페이지로 리다이렉션
+  };
 
   return (
     <>
@@ -34,19 +50,17 @@ export default function Header() {
         }
 
         .nav-link:hover::after {
-          width: 70%; /* 밑줄 길이를 조절 */
+          width: 70%;
         }
       `}</style>
 
       <nav className="navbar navbar-expand-lg" style={{ backgroundColor: '#FFF3C7' }}>
         <div className="container-fluid d-flex justify-content-between align-items-center">
-          {/* SummaryBuddy 왼쪽 */}
-          <a className="navbar-brand fw-bold" href="/MyPage" style={{ marginLeft: '20px' }}>
-          <img src={buddy} alt="SummaryBuddy Logo" style={{ width: '40px', marginRight: '10px' }} /> {/* 로고 이미지 추가 */}
+          <a className="navbar-brand fw-bold" href="/" style={{ marginLeft: '20px' }}>
+            <img src={buddy} alt="SummaryBuddy Logo" style={{ width: '40px', marginRight: '10px' }} />
             SummaryBuddy
           </a>
 
-          {/* Home, Record, Summary 중앙 정렬 및 간격 조정 */}
           <div className="d-flex justify-content-center flex-grow-1">
             <ul className="navbar-nav d-flex flex-row justify-content-center mb-2 mb-lg-0">
               <li className="nav-item" style={{ marginLeft: '100px', marginRight: '100px' }}>
@@ -61,47 +75,29 @@ export default function Header() {
             </ul>
           </div>
 
-          {/* Sign in, Sign up 오른쪽 */}
           <div className="d-flex align-items-center">
-            <a className="nav-link" href="/Login" style={{ marginRight: '10px' }}>Sign in</a>
-            <form className="d-flex rounded" role="search" style={{ marginRight: '20px', backgroundColor: '#FC819E' }}>
-              <Link to="/Register">
-                <button className="btn btb-default rounded fw-bold" type="submit" style={{ color: 'white' }}>
-                  Sign up
-                </button>
-              </Link>
-            </form>
-
-            {/* 로그인 여부에 따른 사이드바 변경 *}
-            {/* {isLoggedIn ? (
+            {isLoggedIn ? (
               <>
-                
                 <a className="nav-link" href="/Home" style={{ marginRight: '10px' }} onClick={handleLogout}>Sign out</a>
-
-                
-                <form className="d-flex rounded" role="search" style={{ marginRight: '20px', backgroundColor: '#FC819E' }}>
-                  <Link to="/MyPage">
-                    <button className="btn btn-default rounded fw-bold" type="button" style={{ color: 'white' }}>
-                      {userName}
-                    </button>
-                  </Link>
-                </form>
+                <Link to="/MyPage">
+                  <button className="btn btn-default rounded fw-bold" type="button" style={{ color: 'white', backgroundColor: '#FC819E', marginRight: '20px' }}>
+                    {username}
+                  </button>
+                </Link>
               </>
             ) : (
               <>
                 <a className="nav-link" href="/Login" style={{ marginRight: '10px' }}>Sign in</a>
-                <form className="d-flex rounded" role="search" style={{ marginRight: '20px', backgroundColor: '#FC819E' }}>
-                  <Link to="/Register">
-                    <button className="btn btb-default rounded fw-bold" type="submit" style={{ color: 'white' }}>
-                      Sign up
-                    </button>
-                  </Link>
-                </form>
+                <Link to="/Register">
+                  <button className="btn btb-default rounded fw-bold" type="submit" style={{ color: 'white', backgroundColor: '#FC819E', marginRight: '20px' }}>
+                    Sign up
+                  </button>
+                </Link>
               </>
-            )} */}
+            )}
           </div>
         </div>
       </nav>
     </>
   );
-};
+}

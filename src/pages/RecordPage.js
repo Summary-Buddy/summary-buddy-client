@@ -4,6 +4,9 @@ import { Container, Card, Form, Button } from 'react-bootstrap';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import './RecordPage.css';
 import { client } from '../utils/client';
+import { useNavigate } from 'react-router-dom';
+import { useEffect } from 'react';
+
 
 const RecordPage = () => {
   // 상태 관리
@@ -12,6 +15,15 @@ const RecordPage = () => {
   const [selectedMemberUsernames, setSelectedMemberUsernames] = useState([]); // 클릭된 회원들을 배열로 저장
   const [isRecording, setIsRecording] = useState(false); // 녹음 상태 관리
 
+
+  const navigate = useNavigate();
+
+    useEffect(() => {
+      const token = localStorage.getItem("jwtToken");
+      if (token == null) {
+        navigate('/Login');
+      }
+    }, []);
   // 검색어 입력 처리 함수
   const handleSearchChange = (event) => {
     const value = event.target.value;
