@@ -1,8 +1,9 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import { Container, Form, Button, Row, Col } from 'react-bootstrap';
 import './MyPage.css';
 import '../background.scss';
 import Swal from 'sweetalert2';
+import { client } from '../utils/client.js';
 
 
 export default function MyPage() {
@@ -11,9 +12,22 @@ export default function MyPage() {
     const [confirmPassword, setConfirmPassword] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
     const [newEmail, setNewEmail] = useState('');
+    const [userDetail, setUserDetail] = useState();
+
+    const getUserDetail = async() => {
+      const memberId = 1; // 로그인 구현 후 수정 필요
+      const res = await client.get(`/member/${memberId}`);
+      if(res.status === 200) {
+        console.log(res);
+        setUserDetail(res.data);
+      }
+    }
+    useEffect(() => {
+      getUserDetail();
+    }, [])
   
     // 비밀번호 변경 핸들러
-    const handlePasswordSubmit = (event) => {
+    const handlePasswordSubmit = async(event) => {
       event.preventDefault(); // 기본 제출 동작 방지
       setErrorMessage(''); // 오류 메시지 초기화
 
@@ -38,12 +52,20 @@ export default function MyPage() {
         });
       } else {
         // 비밀번호 변경 로직 추가 (API 호출 등)
-        Swal.fire({
-          title: "비밀번호 변경 성공!",
-          icon: "success",
-          confirmButtonColor: '#F7418F', // 버튼 색상 변경
-          background: 'white' // 알림창 배경색 변경
-        });
+        const body = {
+          id: 1, // 로그인 구현 후 변경 필요
+          password: newPassword,
+          passwordConfirm: confirmPassword
+        }
+        const res = await client.patch(`/member/password-update`, body);
+        if(res.status === 200) {
+          Swal.fire({
+            title: "비밀번호 변경 성공!",
+            icon: "success",
+            confirmButtonColor: '#F7418F', // 버튼 색상 변경
+            background: 'white' // 알림창 배경색 변경
+          });
+        }
         // 상태 초기화
         setNewPassword('');
         setConfirmPassword('');
@@ -51,7 +73,7 @@ export default function MyPage() {
     };
   
     // 이메일 변경 핸들러
-    const handleEmailSubmit = (event) => {
+    const handleEmailSubmit = async(event) => {
       event.preventDefault(); // 기본 폼 제출 동작 방지
   
       // 이메일 유효성 검사 (예시로 간단한 정규 표현식 사용)
@@ -78,32 +100,43 @@ export default function MyPage() {
       }
 
       // 이메일 변경 로직 추가 (API 호출 등)
-      Swal.fire({
-        title: "이메일 변경 성공!",
-        icon: "success",
-        confirmButtonColor: '#F7418F', // 버튼 색상 변경
-        background: 'white' // 알림창 배경색 변경
-      });
-      
+      const body = {
+        id: 1, // 로그인 구현 후 변경 필요
+        email: newEmail
+      }
+      const res = await client.patch(`/member/email-update`, body);
+      if(res.status === 200) {
+        Swal.fire({
+          title: "이메일 변경 성공!",
+          icon: "success",
+          confirmButtonColor: '#F7418F', // 버튼 색상 변경
+          background: 'white' // 알림창 배경색 변경
+        });
+        
+      }
       setNewEmail(''); // 입력 필드 초기화
     };
 
+  const deleteAccount = async() => {
+    // 회원탈퇴
+  }
+
   return (
-    <div className="mt-5 d-flex flex-column align-items-center" style={{ height: '100vh', backgroundColor: '#FFF3C7' }}>
+    <div className="mt-5 d-flex flex-column align-items-center" style={{ backgroundColor: '#FFF3C7' }}>
       {/* 닉네임 및 이메일 표시 섹션 */}
-      <Container className="mb-4" style={{ maxWidth: '800px', marginBottom: '40px', marginTop: '150px' }}>
+      <Container className="mb-4" style={{ maxWidth: '800px', marginBottom: '40px', marginTop: '80px' }}>
         <Row className="mt-4">
           <Col>
             <Form.Group className="mb-3">
               <Form.Text style={{ fontWeight: 'bold', marginLeft: '10px', fontSize: '1.5rem', color: '#FC819E' }}>
-                사용자닉네임
+                {userDetail?.username}
               </Form.Text>
             </Form.Group>
           </Col>
           <Col>
             <Form.Group className="mb-3">
               <Form.Text style={{ fontWeight: 'bold', marginLeft: '10px', fontSize: '1.1rem' }}>
-                user@example.com
+                {userDetail?.email}
               </Form.Text>
             </Form.Group>
           </Col>
@@ -157,6 +190,7 @@ export default function MyPage() {
             비밀번호 변경하기
           </Button>
         </Form>
+        <h3 className='delete-account-lable' onClick={deleteAccount}>탈퇴하기</h3>
       </Container>
 
       {/* 이메일 변경 섹션 */}

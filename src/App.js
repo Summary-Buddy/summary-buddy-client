@@ -13,7 +13,6 @@ import SmPage from './pages/SmPage';
 
 function App() {
   return (
-      // 
       <div className="app">
         <Header />
         <Routes>
