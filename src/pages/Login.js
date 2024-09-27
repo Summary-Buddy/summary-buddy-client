@@ -2,9 +2,7 @@ import React, { useState } from 'react';
 import '../background.scss';
 import Swal from 'sweetalert2';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
-import { ENDPOINTS } from '../components/Api';
-import { setItem } from '../components/LocalStorageUtils';
+import { client } from '../utils/client';
 
 export default function Login() {
   const [username, setUserName] = useState('');
@@ -18,28 +16,17 @@ export default function Login() {
       Swal.fire({
         title: "모든 필드를 입력해주세요.",
         icon: "warning",
-        confirmButtonColor: '#F7418F', // 버튼 색상 변경
-        background: 'white' // 알림창 배경색 변경
+        confirmButtonColor: '#F7418F',
+        background: 'white'
       });
       return;
-    }
+    };
 
     try {
-      const response = await axios.post(ENDPOINTS.LOGIN, {
-        "username": username,
-        "password": password
-      });
-      if (response.data && response.data.token) {
-        // 이 부분은 localstorage에 jwtToken을 저장하는 부분입니다.
-        // localstorage에 임시로 저장하는 형태로 가져왔으나
-        // 해당 부분은 논의가 필요할꺼 같아 주석을 남겨둡니다.
-        // key는 jwtToken 입니다.
-        const { token } = response.data;
-        console.log(token);
-        localStorage.setItem("jwtToken", token);
+      const res = await client.post(`/member/login`, { username, password });
+      if (res.status === 200) {
+        localStorage.setItem("jwtToken", res.data.token);
         localStorage.setItem("username", username);
-
-        
 
         Swal.fire({
           title: "로그인 성공!",
@@ -47,27 +34,20 @@ export default function Login() {
           confirmButtonColor: '#F7418F',
           background: 'white'
         }).then(() => {
-          navigate('/'); 
-        });
-      } else {
-        // 토큰이 없을 경우
-        Swal.fire({
-          title: "로그인 실패: 유효하지 않은 응답입니다.",
-          icon: "error",
-          confirmButtonColor: '#F7418F',
-          background: 'white'
+          navigate('/');
         });
       }
     } catch (error) {
-      const errorMessage = error.response?.data?.message || "서버 오류입니다.";
       Swal.fire({
-        title: "로그인 실패: " + errorMessage,
+        title: "로그인 실패!",
+        text: "아이디 또는 비밀번호를 확인하세요.",
         icon: "error",
         confirmButtonColor: '#F7418F',
         background: 'white'
       });
     }
-  }
+  };
+
   return (
     <div className='app-container'>
       <div className="card w-20 text-center" style={{ 

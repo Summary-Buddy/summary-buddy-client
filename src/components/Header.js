@@ -15,13 +15,13 @@ export default function Header() {
     if (token !== null) {
       setIsLoggedIn(true);
     }
-  });
+  }, []);
 
   const handleLogout = () => {
     localStorage.removeItem("jwtToken");
     localStorage.removeItem("username");
     setIsLoggedIn(false);
-    navigate("/Login"); // 로그아웃 후 홈으로 리다이렉션
+    navigate("/Login"); // 로그아웃 후 로그인 페이지로 리다이렉션
   };
 
   return (
@@ -56,13 +56,11 @@ export default function Header() {
 
       <nav className="navbar navbar-expand-lg" style={{ backgroundColor: '#FFF3C7' }}>
         <div className="container-fluid d-flex justify-content-between align-items-center">
-          {/* SummaryBuddy 왼쪽 */}
-          <a className="navbar-brand fw-bold" href="/MyPage" style={{ marginLeft: '20px' }}>
-            <img src={buddy} alt="SummaryBuddy Logo" style={{ width: '40px', marginRight: '10px' }} /> {/* 로고 이미지 추가 */}
+          <a className="navbar-brand fw-bold" href="/" style={{ marginLeft: '20px' }}>
+            <img src={buddy} alt="SummaryBuddy Logo" style={{ width: '40px', marginRight: '10px' }} />
             SummaryBuddy
           </a>
 
-          {/* Home, Record, Summary 중앙 정렬 및 간격 조정 */}
           <div className="d-flex justify-content-center flex-grow-1">
             <ul className="navbar-nav d-flex flex-row justify-content-center mb-2 mb-lg-0">
               <li className="nav-item" style={{ marginLeft: '100px', marginRight: '100px' }}>
@@ -77,11 +75,10 @@ export default function Header() {
             </ul>
           </div>
 
-          {/* Sign in, Sign up 또는 로그아웃 및 사용자명 버튼 */}
           <div className="d-flex align-items-center">
             {isLoggedIn ? (
               <>
-                <a className="nav-link" href="/Home" style={{ marginRight: '10px' }}onClick={handleLogout}>Sign out</a>
+                <a className="nav-link" href="/Home" style={{ marginRight: '10px' }} onClick={handleLogout}>Sign out</a>
                 <Link to="/MyPage">
                   <button className="btn btn-default rounded fw-bold" type="button" style={{ color: 'white', backgroundColor: '#FC819E', marginRight: '20px' }}>
                     {username}
@@ -103,4 +100,4 @@ export default function Header() {
       </nav>
     </>
   );
-};
+}

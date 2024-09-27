@@ -3,7 +3,6 @@ import { Container, Form, Button, Row, Col } from 'react-bootstrap';
 import './MyPage.css';
 import '../background.scss';
 import Swal from 'sweetalert2';
-import { useNavigate } from 'react-router-dom';
 import { client } from '../utils/client.js';
 
 
@@ -13,15 +12,6 @@ export default function MyPage() {
     const [confirmPassword, setConfirmPassword] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
     const [newEmail, setNewEmail] = useState('');
-    const navigate = useNavigate();
-
-    useEffect(() => {
-      const token = localStorage.getItem("jwtToken");
-      if (token == null) {
-        navigate('/Login');
-      }
-    }, []);
-
     const [userDetail, setUserDetail] = useState();
 
     const getUserDetail = async() => {
@@ -36,6 +26,7 @@ export default function MyPage() {
       getUserDetail();
     }, [])
   
+    // 비밀번호 변경 핸들러
     const handlePasswordSubmit = async(event) => {
       event.preventDefault(); // 기본 제출 동작 방지
       setErrorMessage(''); // 오류 메시지 초기화
@@ -50,6 +41,7 @@ export default function MyPage() {
         });
         return;
       }
+  
       // 비밀번호 일치 확인
       if (newPassword !== confirmPassword) {
         Swal.fire({
@@ -58,34 +50,26 @@ export default function MyPage() {
           confirmButtonColor: '#F7418F', // 버튼 색상 변경
           background: 'white' // 알림창 배경색 변경
         });
-        return;
-      } 
-      // 비밀번호 변경 로직 추가 (API 호출 등)
-      const body = {
-        id: 1, // 로그인 구현 후 변경 필요
-        password: newPassword,
-        passwordConfirm: confirmPassword
-      }
-      const res = await client.patch(`/member/password-update`, body);
-      if(res.status === 200) {
-        Swal.fire({
-          title: "비밀번호 변경 성공!",
-          icon: "success",
-          confirmButtonColor: '#F7418F', // 버튼 색상 변경
-          background: 'white' // 알림창 배경색 변경
-        });
       } else {
-        // 실패 시 메시지 표시
-        Swal.fire({
-          title: "비밀번호 변경 실패: " + res.data.message,
-          icon: "error",
-          confirmButtonColor: '#F7418F',
-          background: 'white'
-        });
+        // 비밀번호 변경 로직 추가 (API 호출 등)
+        const body = {
+          id: 1, // 로그인 구현 후 변경 필요
+          password: newPassword,
+          passwordConfirm: confirmPassword
+        }
+        const res = await client.patch(`/member/password-update`, body);
+        if(res.status === 200) {
+          Swal.fire({
+            title: "비밀번호 변경 성공!",
+            icon: "success",
+            confirmButtonColor: '#F7418F', // 버튼 색상 변경
+            background: 'white' // 알림창 배경색 변경
+          });
+        }
+        // 상태 초기화
+        setNewPassword('');
+        setConfirmPassword('');
       }
-      // 상태 초기화
-      setNewPassword('');
-      setConfirmPassword('');
     };
   
     // 이메일 변경 핸들러
