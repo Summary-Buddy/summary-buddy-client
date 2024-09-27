@@ -112,13 +112,21 @@ export default function MyPage() {
           confirmButtonColor: '#F7418F', // 버튼 색상 변경
           background: 'white' // 알림창 배경색 변경
         });
-        
       }
       setNewEmail(''); // 입력 필드 초기화
     };
 
   const deleteAccount = async() => {
     // 회원탈퇴
+    const res = await client.delete(`/member`);
+    if(res.status === 200) {
+      Swal.fire({
+        title: "회원 탈퇴 성공! 또 만나요",
+        icon: "success",
+        confirmButtonColor: '#F7418F', // 버튼 색상 변경
+        background: 'white' // 알림창 배경색 변경
+      });
+    }
   }
 
   return (
