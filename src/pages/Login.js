@@ -23,10 +23,18 @@ export default function Login() {
     };
 
     try {
-      const res = await client.post(`/member/login`, { username, password });
-      if (res.status === 200) {
-        localStorage.setItem("jwtToken", res.data.token);
-        localStorage.setItem("userId", res.data.id);
+      const res = await fetch(process.env.REACT_APP_SERVER_URL + `/login`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({username: username, password: password})
+      });
+      
+      if (res.ok) {
+        const result = await res.json();
+        localStorage.setItem("jwtToken", result.token);
+        localStorage.setItem("userId", result.id);
 
         Swal.fire({
           title: "로그인 성공!",
