@@ -3,6 +3,8 @@ import React, { useState, useRef } from 'react';
 import { Container, Card, Form, Button } from 'react-bootstrap';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import './RecordPage.css';
+import { client } from '../utils/client';
+
 
 
 const RecordPage = () => {
@@ -49,8 +51,11 @@ const RecordPage = () => {
     formData.append('file', wavBlob, 'recording.wav'); // WAV 파일 추가
 
     // 회원 이름 배열 생성
-    const membersJson = JSON.stringify(selectedMembers); // 추가된 회원 이름 배열을 JSON 형식으로 변환
-    formData.append('members', new Blob([membersJson], { type: 'application/json' })); // JSON 데이터 추가
+    const membersJson = JSON.stringify({
+      // selectedMemberUsernames      
+      memberIdList: selectedMemberUsernames // 배열 형태로 memberIdList를 포함
+    }); // 추가된 회원 배열을 JSON 형식으로 변환
+    formData.append('content', new Blob([membersJson], { type: 'application/json' })); // JSON 데이터 추가
 
     //   // 회원 이름 JSON 파일 생성
     //   const jsonBlob = new Blob([JSON.stringify({ members: memberNames })], { type: 'application/json' });
@@ -65,11 +70,14 @@ const RecordPage = () => {
       method: 'POST',
       body: formData, // formData에 음성 파일과 회원 정보가 포함되어 있다고 가정
       headers: {
+        // 'content': {membersJson} ,
+        // 'Content-Type': 'multipart/form-data',
         // 필요하다면 여기에 추가적인 헤더를 추가
-        // 예: 'Authorization': `Bearer ${token}`
+        'Authorization': `Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIzMzMiLCJpc3MiOiJzdW1tYXJ5IGJ1ZGR5IiwiaWF0IjoxNzI3NDE1NTk1LCJleHAiOjE3Mjc0MTkxOTV9.47SZgczpG253dE5gvOKlXGnDyj6Ho9qejzTcBEsLPy998h8NJ3g_xHEYjmG_N0BmtqQj5ti2SBCKHF3IcyuZAA`
       },
     })
     .then(response => {
+      console.log(response)
       if (!response.ok) {
         throw new Error('네트워크 응답이 올바르지 않습니다.');
       }
@@ -80,6 +88,8 @@ const RecordPage = () => {
       alert('녹음 파일과 회원 정보가 성공적으로 전송되었습니다.');
     })
     .catch(error => {
+      console.log(formData.values())
+      console.log(membersJson)
       console.error('파일 전송 중 오류 발생:', error);
       alert('녹음 파일 전송에 실패했습니다.');
     });
