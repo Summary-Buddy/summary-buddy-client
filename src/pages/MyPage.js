@@ -4,6 +4,7 @@ import './MyPage.css';
 import '../background.scss';
 import Swal from 'sweetalert2';
 import { client } from '../utils/client.js';
+import { useCookies } from 'react-cookie';
 
 
 export default function MyPage() {
@@ -13,10 +14,11 @@ export default function MyPage() {
     const [errorMessage, setErrorMessage] = useState('');
     const [newEmail, setNewEmail] = useState('');
     const [userDetail, setUserDetail] = useState();
+    const [cookies, setCookie, removeCookie] = useCookies();
 
     const getUserDetail = async() => {
-      const memberId = 1; // 로그인 구현 후 수정 필요
-      const res = await client.get(`/member/${memberId}`);
+      const memberId = cookies.memberId;
+      const res = await client.get(`/member/${memberId}`, { headers: { Authorization: cookies.token } });
       if(res.status === 200) {
         console.log(res);
         setUserDetail(res.data);
@@ -53,11 +55,11 @@ export default function MyPage() {
       } else {
         // 비밀번호 변경 로직 추가 (API 호출 등)
         const body = {
-          id: 1, // 로그인 구현 후 변경 필요
+          id: cookies.memberId,
           password: newPassword,
           passwordConfirm: confirmPassword
         }
-        const res = await client.patch(`/member/password-update`, body);
+        const res = await client.patch(`/member/password-update`, body, { headers: { Authorization: cookies.token } });
         if(res.status === 200) {
           Swal.fire({
             title: "비밀번호 변경 성공!",
@@ -101,10 +103,10 @@ export default function MyPage() {
 
       // 이메일 변경 로직 추가 (API 호출 등)
       const body = {
-        id: 1, // 로그인 구현 후 변경 필요
+        id: cookies.memberId,
         email: newEmail
       }
-      const res = await client.patch(`/member/email-update`, body);
+      const res = await client.patch(`/member/email-update`, body, { headers: { Authorization: cookies.token } });
       if(res.status === 200) {
         Swal.fire({
           title: "이메일 변경 성공!",
@@ -118,7 +120,7 @@ export default function MyPage() {
 
   const deleteAccount = async() => {
     // 회원탈퇴
-    const res = await client.delete(`/member`);
+    const res = await client.delete(`/member`, { headers: { Authorization: cookies.token } });
     if(res.status === 200) {
       Swal.fire({
         title: "회원 탈퇴 성공! 또 만나요",

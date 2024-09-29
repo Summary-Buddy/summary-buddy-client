@@ -6,8 +6,7 @@ export async function client(endpoint, { body, ...customConfig } = {}) {
     ...customConfig,
     headers: {
       ...headers,
-      ...customConfig.headers,
-      // Authorization: process.env.REACT_APP_TEMP_AUTH_HEADER // 로그인 구현되면 수정 필요
+      ...customConfig.headers
     },
   }
 

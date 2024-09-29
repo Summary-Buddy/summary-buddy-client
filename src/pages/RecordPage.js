@@ -6,29 +6,38 @@ import './RecordPage.css';
 import { client } from '../utils/client';
 import { useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
-
-
-
+import { useCookies } from 'react-cookie';
+import { WavRecorder } from 'webm-to-wav-converter';
+import { loginCheck } from '../utils/loginCheck';
 
 const RecordPage = () => {
   // 상태 관리
   const [searchTerm, setSearchTerm] = useState('');
   const [filteredMembers, setFilteredMembers] = useState([]);
-  const [selectedMemberUsernames, setSelectedMemberUsernames] = useState([]); // 클릭된 회원들을 배열로 저장
+  const [selectedMembers, setSelectedMembers] = useState([]); // 클릭된 회원들을 배열로 저장
   const [isRecording, setIsRecording] = useState(false); // 녹음 상태 관리
-  const mediaRecorderRef = useRef(null); // 미디어 레코더를 저장할 ref
-  const audioChunksRef = useRef([]); // 오디오 청크를 저장할 ref
-  // const [memberNames, setMemberNames] = useState([]); // 회원 이름 배열 상태
+  const [cookies, setCookie, removeCookie] = useCookies();
+  const ref = useRef();
+  useEffect(() => {
+    ref.current = new WavRecorder();
+  }, []);
 
 
   const navigate = useNavigate();
 
-    useEffect(() => {
-      const token = localStorage.getItem("jwtToken");
-      if (token == null) {
-        navigate('/Login');
-      }
-    }, []);
+  const fetchLoginCheck = async() => {
+    const token = cookies.token;
+    const memberId = cookies.memberId;
+    const result = await loginCheck(token, memberId);
+    if (!result) {
+      navigate('/Login');
+    }
+  }
+
+  useEffect(() => {
+    fetchLoginCheck();
+  }, []);
+
   // 검색어 입력 처리 함수
   const handleSearchChange = (event) => {
     const value = event.target.value;
@@ -38,130 +47,64 @@ const RecordPage = () => {
 
   // 회원 카드 클릭 처리 함수 (플러스 아이콘과 통합)
   const handleMemberClick = (member) => {
-    if (member && !selectedMemberUsernames.includes(member)) {
-      setSelectedMemberUsernames((prevSelected) => [...prevSelected, member.username]); // 이전 상태를 기반으로 업데이트
+    if (member && !selectedMembers.includes(member)) {
+      setSelectedMembers((prevSelected) => [...prevSelected, member]); // 이전 상태를 기반으로 업데이트
     }
   };
 
   // 회원 카드 삭제 처리 함수
   const handleRemoveMember = (member) => {
-    setSelectedMemberUsernames((prevSelected) => prevSelected.filter((m) => m !== member)); // 선택된 회원 제거
+    setSelectedMembers((prevSelected) => prevSelected.filter((m) => m !== member)); // 선택된 회원 제거
   };
 
   // 음성 녹음 저장 처리 함수
-  const handleSaveRecording = () => {
-    // WAV 변환 후 저장 로직
-    const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/webm' }); // webm 파일로 변환
-    const fileReader = new FileReader();
-    fileReader.onloadend = () => {
-      const audioBuffer = fileReader.result; // 파일 데이터를 가져옴
-      // WAV로 변환
-      const wavBlob = convertToWav(audioBuffer);
+  const handleSaveRecording = async() => {
+    const recordBlob = ref.current.getBlob(true, {sampleRate: 16000});
+    const sound = new File([recordBlob], "recordBlob.wav", { type: "audio/wav" });
 
-      // 서버에 파일 전송
+    // 서버에 파일 전송
     const formData = new FormData();
-    formData.append('file', wavBlob, 'recording.wav'); // WAV 파일 추가
+    formData.append('file', new Blob([sound], { type: 'audio/wave' })); // WAV 파일 추가
 
     // 회원 이름 배열 생성
     const membersJson = JSON.stringify({
-      // selectedMemberUsernames      
-      memberIdList: selectedMemberUsernames // 배열 형태로 memberIdList를 포함
+      memberIdList: selectedMembers.map(member => member.id)
     }); // 추가된 회원 배열을 JSON 형식으로 변환
     formData.append('content', new Blob([membersJson], { type: 'application/json' })); // JSON 데이터 추가
 
-    //   // 회원 이름 JSON 파일 생성
-    //   const jsonBlob = new Blob([JSON.stringify({ members: memberNames })], { type: 'application/json' });
-
-    //   // FormData에 변환된 WAV 파일 추가
-    // const formData = new FormData();
-    // formData.append('file', wavBlob, 'recording.wav'); // 'recording.wav'라는 이름으로 서버에 파일 전송
-    // formData.append('membersFile', jsonBlob, 'members.json'); // JSON 파일 추가
-    
     // 서버로 전송
-    fetch('http://localhost:8080/api/report', {
+    const res = await fetch(process.env.REACT_APP_SERVER_API_URL + '/report', {
       method: 'POST',
-      body: formData, // formData에 음성 파일과 회원 정보가 포함되어 있다고 가정
       headers: {
-        // 'content': {membersJson} ,
-        // 'Content-Type': 'multipart/form-data',
-        // 필요하다면 여기에 추가적인 헤더를 추가
-        'Authorization': `Bearer token`
+        Authorization: cookies.token
       },
-    })
-    .then(response => {
-      console.log(response)
-      if (!response.ok) {
-        throw new Error('네트워크 응답이 올바르지 않습니다.');
-      }
-      return response.json(); // JSON 형식으로 응답을 받음
-    })
-    .then(data => {
-      console.log('Success:', data);
-      alert('녹음 파일과 회원 정보가 성공적으로 전송되었습니다.');
-    })
-    .catch(error => {
-      console.log(formData.values())
-      console.log(membersJson)
-      console.error('파일 전송 중 오류 발생:', error);
-      alert('녹음 파일 전송에 실패했습니다.');
+      body: formData
     });
-
-    // // 서버로 전송
-    // fetch('http://localhost:8080/api/report', {
-    //   method: 'POST',
-    //   body: formData,
-    //   headers: { 
-    //     // 헤더  추가
-    //   },
-    // })
-    // .then(response => response.json())
-    // .then(data => {
-    //   console.log('Success:', data);
-    //   alert('녹음 파일과 회원 정보가 성공적으로 전송되었습니다.');
-    // })
-    // .catch((error) => {
-    //   console.error('Error:', error);
-    //   alert('녹음 파일 전송에 실패했습니다.');
-    // });
-  };
-
-    fileReader.readAsArrayBuffer(audioBlob); // Blob을 ArrayBuffer로 읽음
-  };
-
-  const convertToWav = (audioBuffer) => {
-    // WAV 변환 로직 구현
-    // 구현 예시: audioBuffer에서 WAV Blob 생성
-    const wavBlob = new Blob([audioBuffer], { type: 'audio/wav' }); // WAV로 변환
-    return wavBlob;
+    if(res.ok) {
+      const result = await res.json();
+      console.log("Look!!", result);
+    }
   };
 
   // 녹음 시작/중지 처리 함수
   const handleRecordingToggle = async () => {
     if (!isRecording) {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: { channelCount: 1 } }); // 채널 수 1개
-      mediaRecorderRef.current = new MediaRecorder(stream, { mimeType: 'audio/webm' }); // webm 형식으로 녹음
-      mediaRecorderRef.current.ondataavailable = (event) => {
-        if (event.data.size > 0) {
-          audioChunksRef.current.push(event.data); // 오디오 청크 저장
-        }
-      };
-      mediaRecorderRef.current.start();
       setIsRecording(true);
+      ref.current.start();
       console.log('녹음 시작');
       alert('녹음을 시작합니다.');
     } else {
-      mediaRecorderRef.current.stop();
       setIsRecording(false);
+      ref.current.stop();
       console.log('녹음 중지');
       alert('녹음을 중지합니다.');
     }
   };
 
   const searchMember = async(query) => {
-    const res = await client.get(`/member/search?query=${query}`);
+    const res = await client.get(`/member/search?query=${query}`, { headers: { Authorization: cookies.token } });
     setFilteredMembers(res.data);
   }
-
 
   return (
     <Container className="mt-4 record-container">
@@ -265,7 +208,7 @@ const RecordPage = () => {
                         {member.username}
                       </Card.Text>
                       {/* 추가된 회원이 아닌 경우에만 플러스 아이콘 표시 */}
-                      {!selectedMemberUsernames.includes(member.username) && (
+                      {!selectedMembers.includes(member) && (
                         <i className="bi bi-plus-circle" 
                           onClick={(e) => {
                             e.stopPropagation(); // 부모 요소의 클릭 이벤트 중지
@@ -312,9 +255,9 @@ const RecordPage = () => {
           justifyContent: 'flex-start', // 카드들을 왼쪽 정렬
           padding: '0 10px', // 좌우 패딩 추가
       }}>
-        {selectedMemberUsernames.length > 0 && (
+        {selectedMembers.length > 0 && (
           <>
-            {selectedMemberUsernames.map((username, index) => (
+            {selectedMembers.map((member, index) => (
               <div key={index} style={{ 
                   margin: '10px 0 5px',
                   marginLeft: '5px',
@@ -333,7 +276,7 @@ const RecordPage = () => {
                       variant="link" // 링크 스타일로 설정
                       onClick={(e) => {
                         e.stopPropagation(); // 클릭 이벤트 전파 방지
-                        handleRemoveMember(username);
+                        handleRemoveMember(member);
                       }}
                       style={{
                         position: 'absolute',
@@ -358,7 +301,7 @@ const RecordPage = () => {
                         whiteSpace: 'nowrap', // 텍스트를 한 줄로 제한
                       }}
                     >
-                      {username}
+                      {member.username}
                     </Card.Text>
                   </Card.Body>
                 </Card>
