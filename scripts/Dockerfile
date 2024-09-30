@@ -4,14 +4,22 @@ WORKDIR /app
 
 ENV PATH=/app/node_modules/.bin:$PATH
 
-COPY package.json /app/package.json
+COPY package.json package.json
 
-RUN npm install && npm install -g serve
+RUN npm install
 
-COPY . /app
+COPY . .
 
 RUN npm run build
 
+FROM nginx:stable-alpine
+
+RUN rm -rf /etc/nginx/conf.d
+
+COPY conf /etc/nginx
+
+COPY --from=builder /app/build /usr/share/nginx/html
+
 EXPOSE 3000
 
-ENTRYPOINT ["serve", "-s", "build"]
+CMD ["nginx", "-g", "daemon off;"]
