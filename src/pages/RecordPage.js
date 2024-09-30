@@ -60,6 +60,7 @@ const RecordPage = () => {
     const recordBlob = await blobUrlRes.blob();
     recordBlob.lastModifiedDate = new Date();
     recordBlob.name = "recordBlob.webm";
+    console.log(recordBlob);
 
     // 서버에 파일 전송
     const formData = new FormData();
