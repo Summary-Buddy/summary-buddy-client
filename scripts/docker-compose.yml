@@ -5,8 +5,7 @@ services:
     image: traefik:v3.1.4
     command:
       - "--api.insecure=false"
-      - "--providers.docker=true" 
-      - "--providers.docker.swarmMode=true"
+      - "--providers.docker=true"
       - "--providers.docker.exposedbydefault=false"
       - "--entrypoints.websecure.address=:443"
       - "--entrypoints.web.http.redirections.entrypoint.to=websecure"
@@ -29,18 +28,18 @@ services:
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock"
       - "./acme.json:/letsencrypt/acme.json"
-  frontend:
-    image: ${IMAGE_FULL_URL}
-    container_name: ${DOCKERHUB_IMAGE_NAME}
-    restart: always
-    environment:
-      - TZ=Asia/Seoul
-    ports:
-      - '3000:3000'
-    env_file: .env
-    labels:
-      - traefik.enable=true
-      - traefik.http.services.frontend.loadbalancer.server.port=3000
-      - traefik.http.routers.frontend.entrypoints=websecure
-      - traefik.http.routers.frontend.rule=Host(`hello.summary-buddy.p-e.kr`)
-      - traefik.http.routers.frontend.tls.certresolver=letsencrypt
+  # frontend:
+  #   image: ${IMAGE_FULL_URL}
+  #   container_name: ${DOCKERHUB_IMAGE_NAME}
+  #   restart: always
+  #   environment:
+  #     - TZ=Asia/Seoul
+  #   ports:
+  #     - '3000:3000'
+  #   env_file: .env
+  #   labels:
+  #     - traefik.enable=true
+  #     - traefik.http.services.frontend.loadbalancer.server.port=3000
+  #     - traefik.http.routers.frontend.entrypoints=websecure
+  #     - traefik.http.routers.frontend.rule=Host(`hello.summary-buddy.p-e.kr`)
+  #     - traefik.http.routers.frontend.tls.certresolver=letsencrypt

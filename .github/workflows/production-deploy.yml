@@ -94,10 +94,6 @@ jobs:
           path: .env
           remote_path: /home/${{ secrets.EC2_USERNAME }}/summarybuddy-app/
 
-      - name: Logging
-        run: |
-          echo "${{ env.IMAGE_FULL_URL }} and ${{ env.DOCKERHUB_IMAGE_NAME }}"
-
       # EC2로 배포
       - name: Deploy to EC2 Server
         uses: appleboy/ssh-action@master
