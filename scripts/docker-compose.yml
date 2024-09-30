@@ -36,8 +36,7 @@ services:
     environment:
       - TZ=Asia/Seoul
     ports:
-      - '80:80'
-      - '443:443'
+      - '3000:3000'
     env_file: .env
     labels:
       - traefik.enable=true
