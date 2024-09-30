@@ -40,8 +40,7 @@ services:
     env_file: .env
     labels:
       - traefik.enable=true
-      - traefik.http.services.summarybuddy.loadbalancer.server.port=3000
-      - traefik.http.routers.summarybuddy.entrypoints=websecure
-      - traefik.http.routers.summarybuddy.rule=Host(`hello.summary-buddy.p-e.kr`)
-      - traefik.http.routers.summarybuddy.middlewares=summarybuddy-stripprefix
-      - traefik.http.routers.summarybuddy.tls.certresolver=letsencrypt
+      - traefik.http.services.frontend.loadbalancer.server.port=3000
+      - traefik.http.routers.frontend.entrypoints=websecure
+      - traefik.http.routers.frontend.rule=Host(`hello.summary-buddy.p-e.kr`)
+      - traefik.http.routers.frontend.tls.certresolver=letsencrypt
