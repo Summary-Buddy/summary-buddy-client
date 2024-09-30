@@ -64,7 +64,7 @@ const RecordPage = () => {
 
     // 서버에 파일 전송
     const formData = new FormData();
-    formData.append('file', new Blob([recordBlob], { lastModified: new Date().getTime(), type: 'audio/webm' }));
+    formData.append('file', recordBlob);
 
     // 회원 이름 배열 생성
     const membersJson = JSON.stringify({
