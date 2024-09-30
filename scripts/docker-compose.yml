@@ -28,7 +28,7 @@ services:
         mode: host
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock"
-      - "traefik-certificates:/letsencrypt"
+      - "./acme.json:/letsencrypt/acme.json"
   frontend:
     image: ${IMAGE_FULL_URL}
     container_name: ${DOCKERHUB_IMAGE_NAME}
