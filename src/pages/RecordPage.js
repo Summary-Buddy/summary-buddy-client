@@ -18,7 +18,26 @@ const RecordPage = () => {
   const [selectedMembers, setSelectedMembers] = useState([]); // 클릭된 회원들을 배열로 저장
   const [isRecording, setIsRecording] = useState(false); // 녹음 상태 관리
   const [cookies, setCookie, removeCookie] = useCookies();
-  const { status, startRecording, stopRecording, mediaBlobUrl } = useReactMediaRecorder({ video: false });
+
+  const blobToFile = (theBlob, fileName) => {
+    return new File([theBlob], fileName, {
+      lastModified: new Date().getTime(),
+      type: theBlob.type,
+    });
+  };
+
+  const { status, startRecording, stopRecording, mediaBlobUrl } = useReactMediaRecorder({
+    video: false,
+    audio: true,
+    stopStreamsOnStop: true,
+    blobPropertyBag: {
+      type: "audio/webm",
+    },
+    onStop: async (blobUrl, blob) => {
+      const file = blobToFile(blob, "audio.webm");
+      console.log(file);
+    },
+  });
 
   const navigate = useNavigate();
 
@@ -60,6 +79,7 @@ const RecordPage = () => {
     const recordBlob = await blobUrlRes.blob();
     recordBlob.lastModifiedDate = new Date();
     recordBlob.name = "recordBlob.webm";
+    recordBlob.type.replace('text/html');
     console.log(recordBlob);
 
     // 서버에 파일 전송
