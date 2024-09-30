@@ -1,13 +1,17 @@
+import Cookies from 'js-cookie'; // 쿠키 사용을 위한 import
+
 export async function client(endpoint, { body, ...customConfig } = {}) {
   const SERVER_URL = process.env.REACT_APP_SERVER_API_URL;
-  const headers = { 'Content-Type': 'application/json' };
+  const headers = { 
+    'Content-Type': 'application/json',
+    'Authorization': `Bearer ${Cookies.get('jwtToken')}` // 쿠키에서 JWT를 가져옴
+  };
 
   const config = {
     ...customConfig,
     headers: {
       ...headers,
       ...customConfig.headers,
-      // Authorization: process.env.REACT_APP_TEMP_AUTH_HEADER // 로그인 구현되면 수정 필요
     },
   }
 
@@ -17,7 +21,7 @@ export async function client(endpoint, { body, ...customConfig } = {}) {
 
   let data;
   try {
-    const response = await fetch(SERVER_URL+endpoint, config);
+    const response = await fetch(SERVER_URL + endpoint, config);
     if (response.ok) {
       data = await response.json();
       return data;
@@ -37,5 +41,5 @@ client.post = function (endpoint, body, customConfig = {}) {
 }
 
 client.patch = function (endpoint, body, customConfig = {}) {
-  return client(endpoint, {...customConfig, method: 'PATCH', body});
+  return client(endpoint, { ...customConfig, method: 'PATCH', body });
 }

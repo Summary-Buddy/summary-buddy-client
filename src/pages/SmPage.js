@@ -5,6 +5,7 @@ import { FaFilePdf } from "react-icons/fa6";
 import { client } from '../utils/client';
 import { marked } from 'marked';
 import { useNavigate } from 'react-router-dom';
+import Cookies from 'js-cookie';
 
 export default function SmPage() {
     const [selectedMeeting, setSelectedMeeting] = useState(null); // 선택된 회의록을 저장하는 상태
@@ -18,8 +19,8 @@ export default function SmPage() {
     };
 
   useEffect(() => {
-        const token = localStorage.getItem("jwtToken");
-        if (token == null) {
+        const token = Cookies.get("jwtToken");
+        if (!token) {
           navigate('/Login');
         }
     fetchDocs();

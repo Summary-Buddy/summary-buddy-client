@@ -6,6 +6,7 @@ import './RecordPage.css';
 import { client } from '../utils/client';
 import { useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
+import Cookies from 'js-cookie';
 
 
 const RecordPage = () => {
@@ -19,8 +20,8 @@ const RecordPage = () => {
   const navigate = useNavigate();
 
     useEffect(() => {
-      const token = localStorage.getItem("jwtToken");
-      if (token == null) {
+      const token = Cookies.get("jwtToken");
+      if (!token) {
         navigate('/Login');
       }
     }, []);

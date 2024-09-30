@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import '../background.scss';
 import buddy from '../public/buddy-logo.png'; // 로고 이미지 파일 경로
 import { Link, useNavigate } from 'react-router-dom';
+import Cookies from 'js-cookie';
 
 export default function Header() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -9,17 +10,17 @@ export default function Header() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const token = localStorage.getItem("jwtToken");
-    const storedUserId = localStorage.getItem("userId");
+    const token = Cookies.get("jwtToken"); // 쿠키에서 토큰을 가져옴
+    const storedUserId = Cookies.get("username"); // 쿠키에서 사용자 이름을 가져옴
     setUsername(storedUserId);
-    if (token !== null) {
+    if (token) {
       setIsLoggedIn(true);
     }
-  }, []);
+  });
 
   const handleLogout = () => {
-    localStorage.removeItem("jwtToken");
-    localStorage.removeItem("userId");
+    Cookies.remove("jwtToken");
+    Cookies.remove("username");
     setIsLoggedIn(false);
     navigate("/Login"); // 로그아웃 후 로그인 페이지로 리다이렉션
   };

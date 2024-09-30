@@ -3,6 +3,7 @@ import '../background.scss';
 import Swal from 'sweetalert2';
 import { useNavigate } from 'react-router-dom';
 import { client } from '../utils/client';
+import Cookies from 'js-cookie'; // 쿠키 사용을 위한 import
 
 export default function Login() {
   const [username, setUserName] = useState('');
@@ -12,7 +13,7 @@ export default function Login() {
   const handleLogin = async (e) => {
     e.preventDefault();
 
-    if(!username || !password ) {
+    if (!username || !password) {
       Swal.fire({
         title: "모든 필드를 입력해주세요.",
         icon: "warning",
@@ -20,7 +21,7 @@ export default function Login() {
         background: 'white'
       });
       return;
-    };
+    }
 
     try {
       const res = await fetch(process.env.REACT_APP_SERVER_URL + `/login`, {
@@ -28,14 +29,13 @@ export default function Login() {
         headers: {
           "Content-Type": "application/json"
         },
-        body: JSON.stringify({username: username, password: password})
+        body: JSON.stringify({ username, password })
       });
-      
+
       if (res.ok) {
         const result = await res.json();
-        localStorage.setItem("jwtToken", result.token);
-        localStorage.setItem("userId", result.id);
-
+        Cookies.set('jwtToken', result.token, { expires: 7 }); // 7일 동안 쿠키에 저장
+         Cookies.set('username', username, { expires: 7 });
         Swal.fire({
           title: "로그인 성공!",
           icon: "success",
