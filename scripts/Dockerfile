@@ -6,7 +6,7 @@ ENV PATH=/app/node_modules/.bin:$PATH
 
 COPY package.json /app/package.json
 
-RUN npm install
+RUN npm install && npm install -g serve
 
 COPY . /app
 
@@ -14,4 +14,4 @@ RUN npm run build
 
 EXPOSE 3000
 
-ENTRYPOINT ["npm", "start"]
+ENTRYPOINT ["serve", "-s", "build"]
