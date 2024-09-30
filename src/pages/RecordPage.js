@@ -9,6 +9,7 @@ import { useEffect } from 'react';
 import { useCookies } from 'react-cookie';
 import { WavRecorder } from 'webm-to-wav-converter';
 import { loginCheck } from '../utils/loginCheck';
+import Swal from 'sweetalert2';
 
 const RecordPage = () => {
   // 상태 관리
@@ -72,7 +73,18 @@ const RecordPage = () => {
     }); // 추가된 회원 배열을 JSON 형식으로 변환
     formData.append('content', new Blob([membersJson], { type: 'application/json' })); // JSON 데이터 추가
 
+    // 로딩 알림창 표시
+    Swal.fire({
+      title: '로딩 중...',
+      html: '회의록 생성 중입니다. 잠시만 기다려 주세요.',
+      didOpen: () => {
+        Swal.showLoading(); // 로딩 애니메이션 표시
+      },
+      allowOutsideClick: false, // 바깥 클릭 시 알림창 닫지 않음
+    });
+
     // 서버로 전송
+    try {
     const res = await fetch(process.env.REACT_APP_SERVER_API_URL + '/report', {
       method: 'POST',
       headers: {
@@ -83,6 +95,25 @@ const RecordPage = () => {
     if(res.ok) {
       const result = await res.json();
       console.log("Look!!", result);
+
+      // 성공 및 실패 메시지 표시
+      Swal.fire({
+        title: "회의록 생성 성공!",
+        icon: "success",
+        confirmButtonColor: '#F7418F',
+        background: 'white'
+      })
+    } else {
+      throw new Error('회의록 생성 실패');
+    }
+    } catch (error) {
+      Swal.fire({
+        title: "오류 발생!",
+        text: error.message,
+        icon: "error",
+        confirmButtonColor: '#F7418F',
+        background: 'white'
+      });
     }
   };
 

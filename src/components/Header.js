@@ -27,7 +27,7 @@ export default function Header() {
 
   useEffect(() => {
     fetchLoginCheck();
-  }, []);
+  }); // 로그인 후 바로 헤더 바뀌게 수정
 
   const handleLogout = () => {
     removeCookie('token');
