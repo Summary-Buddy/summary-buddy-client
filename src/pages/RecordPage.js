@@ -1,30 +1,43 @@
 import '../background.scss';
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { Container, Card, Form, Button } from 'react-bootstrap';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import './RecordPage.css';
 import { client } from '../utils/client';
 import { useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
-import Cookies from 'js-cookie';
-
+import { useCookies } from 'react-cookie';
+import { WavRecorder } from 'webm-to-wav-converter';
+import { loginCheck } from '../utils/loginCheck';
 
 const RecordPage = () => {
   // 상태 관리
   const [searchTerm, setSearchTerm] = useState('');
   const [filteredMembers, setFilteredMembers] = useState([]);
-  const [selectedMemberUsernames, setSelectedMemberUsernames] = useState([]); // 클릭된 회원들을 배열로 저장
+  const [selectedMembers, setSelectedMembers] = useState([]); // 클릭된 회원들을 배열로 저장
   const [isRecording, setIsRecording] = useState(false); // 녹음 상태 관리
+  const [cookies, setCookie, removeCookie] = useCookies();
+  const ref = useRef();
+  useEffect(() => {
+    ref.current = new WavRecorder();
+  }, []);
 
 
   const navigate = useNavigate();
 
-    useEffect(() => {
-      const token = Cookies.get("jwtToken");
-      if (!token) {
-        navigate('/Login');
-      }
-    }, []);
+  const fetchLoginCheck = async() => {
+    const token = cookies.token;
+    const memberId = cookies.memberId;
+    const result = await loginCheck(token, memberId);
+    if (!result) {
+      navigate('/Login');
+    }
+  }
+
+  useEffect(() => {
+    fetchLoginCheck();
+  }, []);
+
   // 검색어 입력 처리 함수
   const handleSearchChange = (event) => {
     const value = event.target.value;
@@ -34,39 +47,65 @@ const RecordPage = () => {
 
   // 회원 카드 클릭 처리 함수 (플러스 아이콘과 통합)
   const handleMemberClick = (member) => {
-    if (member && !selectedMemberUsernames.includes(member)) {
-      setSelectedMemberUsernames((prevSelected) => [...prevSelected, member.username]); // 이전 상태를 기반으로 업데이트
+    if (member && !selectedMembers.includes(member)) {
+      setSelectedMembers((prevSelected) => [...prevSelected, member]); // 이전 상태를 기반으로 업데이트
     }
   };
 
   // 회원 카드 삭제 처리 함수
   const handleRemoveMember = (member) => {
-    setSelectedMemberUsernames((prevSelected) => prevSelected.filter((m) => m !== member)); // 선택된 회원 제거
+    setSelectedMembers((prevSelected) => prevSelected.filter((m) => m !== member)); // 선택된 회원 제거
   };
 
   // 음성 녹음 저장 처리 함수
-  const handleSaveRecording = () => {
-    alert('회의 내용을 저장합니다.');
-    // 파일 저장 로직 추가 가능
+  const handleSaveRecording = async() => {
+    const recordBlob = ref.current.getBlob(true, {sampleRate: 16000});
+    const sound = new File([recordBlob], "recordBlob.wav", { type: "audio/wav" });
+
+    // 서버에 파일 전송
+    const formData = new FormData();
+    formData.append('file', new Blob([sound], { type: 'audio/wave' })); // WAV 파일 추가
+
+    // 회원 이름 배열 생성
+    const membersJson = JSON.stringify({
+      memberIdList: selectedMembers.map(member => member.id)
+    }); // 추가된 회원 배열을 JSON 형식으로 변환
+    formData.append('content', new Blob([membersJson], { type: 'application/json' })); // JSON 데이터 추가
+
+    // 서버로 전송
+    const res = await fetch(process.env.REACT_APP_SERVER_API_URL + '/report', {
+      method: 'POST',
+      headers: {
+        Authorization: cookies.token
+      },
+      body: formData
+    });
+    if(res.ok) {
+      const result = await res.json();
+      console.log("Look!!", result);
+    }
   };
 
   // 녹음 시작/중지 처리 함수
-  const handleRecordingToggle = () => {
-    setIsRecording((prevIsRecording) => !prevIsRecording); // 함수형 업데이트
+  const handleRecordingToggle = async () => {
     if (!isRecording) {
+      setIsRecording(true);
+      ref.current.start();
       console.log('녹음 시작');
       alert('녹음을 시작합니다.');
     } else {
+      setIsRecording(false);
+      ref.current.stop();
       console.log('녹음 중지');
       alert('녹음을 중지합니다.');
     }
   };
 
+
   const searchMember = async(query) => {
-    const res = await client.get(`/member/search?query=${query}`);
+    const res = await client.get(`/member/search?query=${query}`, { headers: { Authorization: cookies.token } });
     setFilteredMembers(res.data);
   }
-
 
   return (
     <Container className="mt-4 record-container">
@@ -170,7 +209,7 @@ const RecordPage = () => {
                         {member.username}
                       </Card.Text>
                       {/* 추가된 회원이 아닌 경우에만 플러스 아이콘 표시 */}
-                      {!selectedMemberUsernames.includes(member.username) && (
+                      {!selectedMembers.includes(member) && (
                         <i className="bi bi-plus-circle" 
                           onClick={(e) => {
                             e.stopPropagation(); // 부모 요소의 클릭 이벤트 중지
@@ -217,9 +256,9 @@ const RecordPage = () => {
           justifyContent: 'flex-start', // 카드들을 왼쪽 정렬
           padding: '0 10px', // 좌우 패딩 추가
       }}>
-        {selectedMemberUsernames.length > 0 && (
+        {selectedMembers.length > 0 && (
           <>
-            {selectedMemberUsernames.map((username, index) => (
+            {selectedMembers.map((member, index) => (
               <div key={index} style={{ 
                   margin: '10px 0 5px',
                   marginLeft: '5px',
@@ -238,7 +277,7 @@ const RecordPage = () => {
                       variant="link" // 링크 스타일로 설정
                       onClick={(e) => {
                         e.stopPropagation(); // 클릭 이벤트 전파 방지
-                        handleRemoveMember(username);
+                        handleRemoveMember(member);
                       }}
                       style={{
                         position: 'absolute',
@@ -263,7 +302,7 @@ const RecordPage = () => {
                         whiteSpace: 'nowrap', // 텍스트를 한 줄로 제한
                       }}
                     >
-                      {username}
+                      {member.username}
                     </Card.Text>
                   </Card.Body>
                 </Card>

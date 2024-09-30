@@ -2,25 +2,36 @@ import React, { useEffect, useState } from 'react';
 import '../background.scss';
 import buddy from '../public/buddy-logo.png'; // 로고 이미지 파일 경로
 import { Link, useNavigate } from 'react-router-dom';
-import Cookies from 'js-cookie';
+import { useCookies } from 'react-cookie';
+import { client } from '../utils/client';
 
 export default function Header() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [username, setUsername] = useState("");
   const navigate = useNavigate();
+  const [cookies, setCookie, removeCookie] = useCookies();
+
+  const fetchLoginCheck = async() => {
+    const token = cookies.token;
+    const memberId = cookies.memberId;
+    try {
+      const res = await client.get(`/member/${memberId}`, { headers: { Authorization: token } });
+      if (res.status === 200) {
+        setUsername(res.data.username);
+        setIsLoggedIn(true);
+      }
+    } catch(err) {
+      setIsLoggedIn(false);
+    }
+  }
 
   useEffect(() => {
-    const token = Cookies.get("jwtToken"); // 쿠키에서 토큰을 가져옴
-    const storedUserId = Cookies.get("username"); // 쿠키에서 사용자 이름을 가져옴
-    setUsername(storedUserId);
-    if (token) {
-      setIsLoggedIn(true);
-    }
-  });
+    fetchLoginCheck();
+  }, []);
 
   const handleLogout = () => {
-    Cookies.remove("jwtToken");
-    Cookies.remove("username");
+    removeCookie('token');
+    removeCookie('memberId');
     setIsLoggedIn(false);
     navigate("/Login"); // 로그아웃 후 로그인 페이지로 리다이렉션
   };
@@ -55,7 +66,7 @@ export default function Header() {
         }
       `}</style>
 
-      <nav className="navbar navbar-expand-lg" style={{ backgroundColor: '#FFF3C7' }}>
+      <nav className="navbar navbar-expand-lg" style={{ backgroundColor: '#FFF3C7', marginBottom: '20px' }}>
         <div className="container-fluid d-flex justify-content-between align-items-center">
           <a className="navbar-brand fw-bold" href="/" style={{ marginLeft: '20px' }}>
             <img src={buddy} alt="SummaryBuddy Logo" style={{ width: '40px', marginRight: '10px' }} />
