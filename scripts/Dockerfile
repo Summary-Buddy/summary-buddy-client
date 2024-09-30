@@ -14,9 +14,7 @@ RUN npm run build
 
 FROM nginx:stable-alpine
 
-RUN rm -rf /etc/nginx/conf.d
-
-COPY conf /etc/nginx
+COPY nginx/nginx.conf /etc/nginx/conf.d
 
 COPY --from=builder /app/build /usr/share/nginx/html
 
