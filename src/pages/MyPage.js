@@ -5,6 +5,7 @@ import '../background.scss';
 import Swal from 'sweetalert2';
 import { client } from '../utils/client.js';
 import { useCookies } from 'react-cookie';
+import { useNavigate } from 'react-router-dom';
 
 
 export default function MyPage() {
@@ -15,6 +16,7 @@ export default function MyPage() {
     const [newEmail, setNewEmail] = useState('');
     const [userDetail, setUserDetail] = useState();
     const [cookies, setCookie, removeCookie] = useCookies();
+    const navigate = useNavigate();
 
     const getUserDetail = async() => {
       const memberId = cookies.memberId;
@@ -127,6 +129,8 @@ export default function MyPage() {
         icon: "success",
         confirmButtonColor: '#F7418F', // 버튼 색상 변경
         background: 'white' // 알림창 배경색 변경
+      }).then(() => {
+        navigate("/");
       });
     }
   }
