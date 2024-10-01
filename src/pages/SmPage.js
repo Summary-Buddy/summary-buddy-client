@@ -45,11 +45,6 @@ export default function SmPage() {
     setSelectedMeeting(res.data);
   }
 
-  const makeTitle = (createdAt) => {
-    const date = new Date(createdAt);
-    return date.getMonth().toString().padStart(2, 0) + date.getDate().toString().padStart(2, 0) + " 회의록";
-  }
-
   return (
     <div className='app-container'>
       <div className="Summary">
@@ -104,7 +99,7 @@ export default function SmPage() {
                     cursor: 'pointer',
                     fontWeight: 'bold'
                   }}>
-                    {`${makeTitle(selectedMeeting.createdAt)}.pdf`}
+                    {`${selectedMeeting.previewTitle}.pdf`}
                   </a>
                 </div>
               </>
