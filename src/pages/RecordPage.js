@@ -9,6 +9,7 @@ import { useEffect } from 'react';
 import { loginCheck } from '../utils/loginCheck';
 import Swal from 'sweetalert2';
 import { useReactMediaRecorder } from "react-media-recorder";
+import { useCookies } from 'react-cookie';
 
 const RecordPage = () => {
   // 상태 관리
@@ -16,6 +17,7 @@ const RecordPage = () => {
   const [filteredMembers, setFilteredMembers] = useState([]);
   const [selectedMembers, setSelectedMembers] = useState([]); // 클릭된 회원들을 배열로 저장
   const [isRecording, setIsRecording] = useState(false); // 녹음 상태 관리
+  const [cookies, setCookie, removeCookie] = useCookies();
 
   const blobToFile = (theBlob, fileName) => {
     return new File([theBlob], fileName, {
@@ -79,7 +81,6 @@ const RecordPage = () => {
     }
     recordBlob.lastModifiedDate = new Date();
     recordBlob.name = "recordBlob.webm";
-    recordBlob.type.replace('text/html');
     console.log(recordBlob);
 
     // 서버에 파일 전송
@@ -104,15 +105,26 @@ const RecordPage = () => {
 
     // 서버로 전송
     try {
-      const res = await client.post('/report', formData);
-      console.log(res);
-      // 성공 및 실패 메시지 표시
-      Swal.fire({
-        title: "회의록 생성 성공!",
-        icon: "success",
-        confirmButtonColor: '#F7418F',
-        background: 'white'
-      })
+      const res = await fetch(process.env.REACT_APP_SERVER_API_URL + '/report', {
+        method: 'POST',
+        headers: {
+          Authorization: cookies.token
+        },
+        body: formData
+      });
+      if(res.ok) {
+        const result = await res.json();
+        console.log(result);
+        // 성공 및 실패 메시지 표시
+        Swal.fire({
+          title: "회의록 생성 성공!",
+          icon: "success",
+          confirmButtonColor: '#F7418F',
+          background: 'white'
+        })
+      } else {
+        throw new Error('회의록 생성 실패');
+      }
     } catch (error) {
       Swal.fire({
         title: "오류 발생!",
