@@ -139,6 +139,12 @@ const RecordPage = () => {
     }
   };
 
+  const checkSelectedMember = (target) => {
+    for(const member of selectedMembers) {
+      if(member.id == target.id) return true;
+    }
+    return false;
+  }
 
   const searchMember = async(query) => {
     const res = await client.get(`/member/search?query=${query}`);
@@ -247,7 +253,7 @@ const RecordPage = () => {
                         {member.username}
                       </Card.Text>
                       {/* 추가된 회원이 아닌 경우에만 플러스 아이콘 표시 */}
-                      {!selectedMembers.includes(member) && (
+                      {!checkSelectedMember(member) && (
                         <i className="bi bi-plus-circle" 
                           onClick={(e) => {
                             e.stopPropagation(); // 부모 요소의 클릭 이벤트 중지
