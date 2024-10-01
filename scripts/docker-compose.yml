@@ -17,10 +17,10 @@ services:
       - --entrypoints.websecure.address=:443
       # remove next line when using Traefik v2
       - --entrypoints.websecure.asDefault=true 
-      - --entrypoints.websecure.http.tls.certresolver=myresolver
-      - --certificatesresolvers.myresolver.acme.email=summarybuddy@gmail.com
-      - --certificatesresolvers.myresolver.acme.tlschallenge=true
-      - --certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json
+      - --entrypoints.websecure.http.tls.certresolver=letsencrypt
+      - --certificatesresolvers.letsencrypt.acme.email=summarybuddy@gmail.com
+      - --certificatesresolvers.letsencrypt.acme.tlschallenge=true
+      - --certificatesresolvers.letsencrypt.acme.storage=/letsencrypt/acme.json
       - --providers.docker.network=summarybuddy
     ports:
       - target: 443
