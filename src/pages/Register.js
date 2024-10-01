@@ -3,7 +3,6 @@ import '../background.scss';
 import Swal from 'sweetalert2';
 import { useNavigate } from 'react-router-dom';
 import { client } from '../utils/client';
-import { useCookies } from 'react-cookie';
 
 export default function Register() {
   const [username, setUserName] = useState('');
@@ -11,7 +10,6 @@ export default function Register() {
   const [chpassword, setChpassword] = useState('');
   const [email, setEmail] = useState('');
   const navigate = useNavigate();
-  const [cookies, setCookie, removeCookie] = useCookies();
 
   const handleRegister = async(e) => {
     e.preventDefault();
@@ -43,7 +41,7 @@ export default function Register() {
       passwordConfirm: chpassword
     }
 
-    const res = await client.post(`/member/join`, body, { headers: { Authorization: cookies.token } });
+    const res = await client.post(`/member/join`, body);
     if(res.status === 200) {
       Swal.fire({
         title: "회원가입 성공!",

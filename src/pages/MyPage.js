@@ -18,7 +18,7 @@ export default function MyPage() {
 
     const getUserDetail = async() => {
       const memberId = cookies.memberId;
-      const res = await client.get(`/member/${memberId}`, { headers: { Authorization: cookies.token } });
+      const res = await client.get(`/member/${memberId}`);
       if(res.status === 200) {
         console.log(res);
         setUserDetail(res.data);
@@ -59,7 +59,7 @@ export default function MyPage() {
           password: newPassword,
           passwordConfirm: confirmPassword
         }
-        const res = await client.patch(`/member/password-update`, body, { headers: { Authorization: cookies.token } });
+        const res = await client.patch(`/member/password-update`, body);
         if(res.status === 200) {
           Swal.fire({
             title: "비밀번호 변경 성공!",
@@ -106,7 +106,7 @@ export default function MyPage() {
         id: cookies.memberId,
         email: newEmail
       }
-      const res = await client.patch(`/member/email-update`, body, { headers: { Authorization: cookies.token } });
+      const res = await client.patch(`/member/email-update`, body);
       if(res.status === 200) {
         Swal.fire({
           title: "이메일 변경 성공!",
@@ -120,7 +120,7 @@ export default function MyPage() {
 
   const deleteAccount = async() => {
     // 회원탈퇴
-    const res = await client.delete(`/member`, { headers: { Authorization: cookies.token } });
+    const res = await client.delete(`/member`);
     if(res.status === 200) {
       Swal.fire({
         title: "회원 탈퇴 성공! 또 만나요",

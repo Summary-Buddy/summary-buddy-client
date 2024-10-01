@@ -6,7 +6,6 @@ import './RecordPage.css';
 import { client } from '../utils/client';
 import { useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
-import { useCookies } from 'react-cookie';
 import { loginCheck } from '../utils/loginCheck';
 import Swal from 'sweetalert2';
 import { useReactMediaRecorder } from "react-media-recorder";
@@ -17,7 +16,6 @@ const RecordPage = () => {
   const [filteredMembers, setFilteredMembers] = useState([]);
   const [selectedMembers, setSelectedMembers] = useState([]); // 클릭된 회원들을 배열로 저장
   const [isRecording, setIsRecording] = useState(false); // 녹음 상태 관리
-  const [cookies, setCookie, removeCookie] = useCookies();
 
   const blobToFile = (theBlob, fileName) => {
     return new File([theBlob], fileName, {
@@ -42,9 +40,7 @@ const RecordPage = () => {
   const navigate = useNavigate();
 
   const fetchLoginCheck = async() => {
-    const token = cookies.token;
-    const memberId = cookies.memberId;
-    const result = await loginCheck(token, memberId);
+    const result = await loginCheck();
     if (!result) {
       navigate('/Login');
     }
@@ -108,16 +104,8 @@ const RecordPage = () => {
 
     // 서버로 전송
     try {
-    const res = await fetch(process.env.REACT_APP_SERVER_API_URL + '/report', {
-      method: 'POST',
-      headers: {
-        Authorization: cookies.token
-      },
-      body: formData
-    });
-    if(res.ok) {
-      const result = await res.json();
-
+      const res = await client.post('/report', formData);
+      console.log(res);
       // 성공 및 실패 메시지 표시
       Swal.fire({
         title: "회의록 생성 성공!",
@@ -125,9 +113,6 @@ const RecordPage = () => {
         confirmButtonColor: '#F7418F',
         background: 'white'
       })
-    } else {
-      throw new Error('회의록 생성 실패');
-    }
     } catch (error) {
       Swal.fire({
         title: "오류 발생!",
@@ -156,7 +141,7 @@ const RecordPage = () => {
 
 
   const searchMember = async(query) => {
-    const res = await client.get(`/member/search?query=${query}`, { headers: { Authorization: cookies.token } });
+    const res = await client.get(`/member/search?query=${query}`);
     setFilteredMembers(res.data);
   }
 

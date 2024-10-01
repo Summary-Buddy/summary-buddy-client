@@ -4,7 +4,7 @@ export async function client(endpoint, { body, ...customConfig } = {}) {
   const SERVER_URL = process.env.REACT_APP_SERVER_API_URL;
   const headers = { 
     'Content-Type': 'application/json',
-    'Authorization': `Bearer ${Cookies.get('jwtToken')}` // 쿠키에서 JWT를 가져옴
+    'Authorization': Cookies.get('token') // 쿠키에서 JWT를 가져옴
   };
 
   const config = {
