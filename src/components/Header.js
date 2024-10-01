@@ -12,10 +12,9 @@ export default function Header() {
   const [cookies, setCookie, removeCookie] = useCookies();
 
   const fetchLoginCheck = async() => {
-    const token = cookies.token;
     const memberId = cookies.memberId;
     try {
-      const res = await client.get(`/member/${memberId}`, { headers: { Authorization: token } });
+      const res = await client.get(`/member/${memberId}`);
       if (res.status === 200) {
         setUsername(res.data.username);
         setIsLoggedIn(true);

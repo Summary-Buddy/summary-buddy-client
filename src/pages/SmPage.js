@@ -5,30 +5,26 @@ import { FaFilePdf } from "react-icons/fa6";
 import { client } from '../utils/client';
 import { marked } from 'marked';
 import { useNavigate } from 'react-router-dom';
-import { useCookies } from 'react-cookie';
 import { loginCheck } from '../utils/loginCheck';
 
 export default function SmPage() {
   const [selectedMeeting, setSelectedMeeting] = useState(null); // 선택된 회의록을 저장하는 상태
   const [meetingMinutes, setMeetingMinutes] = useState([]);
   const navigate = useNavigate();
-  const [cookies, setCookie, removeCookie] = useCookies();
 
   // PDF 파일 다운로드
   const handleDownloadPDF = async (reportId) => {
-    const res = await client.post(`/report/pdf`, { reportId }, { headers: { Authorization: cookies.token } });
+    const res = await client.post(`/report/pdf`, { reportId });
     window.open(res.data.pdfDownloadUrl, "_blank");
   };
 
   const fetchDocs = async () => {
-    const res = await client.get('/report', { headers: { Authorization: cookies.token } });
+    const res = await client.get('/report');
     setMeetingMinutes(res.data);
   }
 
   const fetchLoginCheck = async () => {
-    const token = cookies.token;
-    const memberId = cookies.memberId;
-    const result = await loginCheck(token, memberId);
+    const result = await loginCheck();
     if (!result) {
       navigate('/Login');
     } else {
@@ -41,7 +37,7 @@ export default function SmPage() {
   }, []);
 
   const fetchDetail = async (reportId) => {
-    const res = await client.get(`/report/${reportId}`, { headers: { Authorization: cookies.token } });
+    const res = await client.get(`/report/${reportId}`);
     setSelectedMeeting(res.data);
   }
 
