@@ -27,7 +27,7 @@ export default function Header() {
 
   useEffect(() => {
     fetchLoginCheck();
-  }, []);
+  }); // 로그인 후 바로 헤더 바뀌게 수정
 
   const handleLogout = () => {
     removeCookie('token');
@@ -70,7 +70,7 @@ export default function Header() {
         <div className="container-fluid d-flex justify-content-between align-items-center">
           <a className="navbar-brand fw-bold" href="/" style={{ marginLeft: '20px' }}>
             <img src={buddy} alt="SummaryBuddy Logo" style={{ width: '40px', marginRight: '10px' }} />
-            SummaryBuddy
+            <span style={{ fontFamily: 'HakgyoansimDunggeunmisoTTF-B' }}>SummaryBuddy</span>
           </a>
 
           <div className="d-flex justify-content-center flex-grow-1">

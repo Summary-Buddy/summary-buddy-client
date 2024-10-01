@@ -16,4 +16,12 @@ h1 {
   justify-content: center;
   font-size: calc(10px + 2vmin);
   color: white;
+  
+}
+
+@font-face {
+  font-family: 'HakgyoansimDunggeunmisoTTF-B';
+  src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/2408-5@1.0/HakgyoansimDunggeunmisoTTF-B.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
 }
