@@ -150,6 +150,7 @@ const RecordPage = () => {
     }
   };
 
+
   const searchMember = async(query) => {
     const res = await client.get(`/member/search?query=${query}`, { headers: { Authorization: cookies.token } });
     setFilteredMembers(res.data);

@@ -14,7 +14,7 @@ export default function Login() {
   const handleLogin = async (e) => {
     e.preventDefault();
 
-    if(!username || !password ) {
+    if (!username || !password) {
       Swal.fire({
         title: "모든 필드를 입력해주세요.",
         icon: "warning",
@@ -22,7 +22,7 @@ export default function Login() {
         background: 'white'
       });
       return;
-    };
+    }
 
     try {
       const res = await client.post('/login', {username, password});
