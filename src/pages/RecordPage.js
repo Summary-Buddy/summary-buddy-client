@@ -7,9 +7,9 @@ import { client } from '../utils/client';
 import { useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
 import { useCookies } from 'react-cookie';
-import { WavRecorder } from 'webm-to-wav-converter';
 import { loginCheck } from '../utils/loginCheck';
 import Swal from 'sweetalert2';
+import { useReactMediaRecorder } from "react-media-recorder";
 
 const RecordPage = () => {
   // 상태 관리
@@ -18,11 +18,26 @@ const RecordPage = () => {
   const [selectedMembers, setSelectedMembers] = useState([]); // 클릭된 회원들을 배열로 저장
   const [isRecording, setIsRecording] = useState(false); // 녹음 상태 관리
   const [cookies, setCookie, removeCookie] = useCookies();
-  const ref = useRef();
-  useEffect(() => {
-    ref.current = new WavRecorder();
-  }, []);
 
+  const blobToFile = (theBlob, fileName) => {
+    return new File([theBlob], fileName, {
+      lastModified: new Date().getTime(),
+      type: theBlob.type,
+    });
+  };
+
+  const { status, startRecording, stopRecording, mediaBlobUrl } = useReactMediaRecorder({
+    video: false,
+    audio: true,
+    stopStreamsOnStop: true,
+    blobPropertyBag: {
+      type: "audio/webm",
+    },
+    onStop: async (blobUrl, blob) => {
+      const file = blobToFile(blob, "audio.webm");
+      console.log(file);
+    },
+  });
 
   const navigate = useNavigate();
 
@@ -60,12 +75,16 @@ const RecordPage = () => {
 
   // 음성 녹음 저장 처리 함수
   const handleSaveRecording = async() => {
-    const recordBlob = ref.current.getBlob(true, {sampleRate: 16000});
-    const sound = new File([recordBlob], "recordBlob.wav", { type: "audio/wav" });
+    const blobUrlRes = await fetch(mediaBlobUrl);
+    const recordBlob = await blobUrlRes.blob();
+    recordBlob.lastModifiedDate = new Date();
+    recordBlob.name = "recordBlob.webm";
+    recordBlob.type.replace('text/html');
+    console.log(recordBlob);
 
     // 서버에 파일 전송
     const formData = new FormData();
-    formData.append('file', new Blob([sound], { type: 'audio/wave' })); // WAV 파일 추가
+    formData.append('file', recordBlob);
 
     // 회원 이름 배열 생성
     const membersJson = JSON.stringify({
@@ -94,7 +113,6 @@ const RecordPage = () => {
     });
     if(res.ok) {
       const result = await res.json();
-      console.log("Look!!", result);
 
       // 성공 및 실패 메시지 표시
       Swal.fire({
@@ -121,12 +139,12 @@ const RecordPage = () => {
   const handleRecordingToggle = async () => {
     if (!isRecording) {
       setIsRecording(true);
-      ref.current.start();
+      startRecording();
       console.log('녹음 시작');
       alert('녹음을 시작합니다.');
     } else {
       setIsRecording(false);
-      ref.current.stop();
+      stopRecording();
       console.log('녹음 중지');
       alert('녹음을 중지합니다.');
     }

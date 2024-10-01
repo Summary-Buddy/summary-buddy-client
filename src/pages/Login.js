@@ -3,6 +3,7 @@ import '../background.scss';
 import Swal from 'sweetalert2';
 import { useNavigate } from 'react-router-dom';
 import { useCookies } from 'react-cookie';
+import { client } from '../utils/client';
 
 export default function Login() {
   const [username, setUserName] = useState('');
@@ -24,28 +25,19 @@ export default function Login() {
     }
 
     try {
-      const res = await fetch(process.env.REACT_APP_SERVER_URL + `/login`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ username, password })
+      const res = await client.post('/login', {username, password});
+
+      setCookie("token", res.token);
+      setCookie("memberId", res.id);
+
+      Swal.fire({
+        title: "로그인 성공!",
+        icon: "success",
+        confirmButtonColor: '#F7418F',
+        background: 'white'
+      }).then(() => {
+        navigate('/');
       });
-
-      if (res.ok) {
-        const result = await res.json();
-        setCookie("token", result.token);
-        setCookie("memberId", result.id);
-
-        Swal.fire({
-          title: "로그인 성공!",
-          icon: "success",
-          confirmButtonColor: '#F7418F',
-          background: 'white'
-        }).then(() => {
-          navigate('/');
-        });
-      }
     } catch (error) {
       Swal.fire({
         title: "로그인 실패!",
