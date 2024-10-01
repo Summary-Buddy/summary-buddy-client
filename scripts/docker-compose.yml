@@ -32,6 +32,8 @@ services:
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock"
       - "./acme.json:/letsencrypt/acme.json"
+    networks:
+      - summarybuddy
   frontend:
     image: ${IMAGE_FULL_URL}
     container_name: ${DOCKERHUB_IMAGE_NAME}
@@ -47,3 +49,5 @@ services:
       - traefik.http.routers.frontend.entrypoints=websecure
       - traefik.http.routers.frontend.rule=Host(`hello.summary-buddy.p-e.kr`) && !PathPrefix(`/api`)
       - traefik.http.routers.frontend.tls.certresolver=letsencrypt
+    networks:
+      - summarybuddy
