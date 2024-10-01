@@ -77,6 +77,10 @@ const RecordPage = () => {
   const handleSaveRecording = async() => {
     const blobUrlRes = await fetch(mediaBlobUrl);
     const recordBlob = await blobUrlRes.blob();
+    if(recordBlob.size > 10000000) {
+      alert("파일 크기가 너무 큽니다.");
+      return;
+    }
     recordBlob.lastModifiedDate = new Date();
     recordBlob.name = "recordBlob.webm";
     recordBlob.type.replace('text/html');
