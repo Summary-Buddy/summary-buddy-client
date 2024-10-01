@@ -21,6 +21,7 @@ services:
       - --certificatesresolvers.myresolver.acme.email=summarybuddy@gmail.com
       - --certificatesresolvers.myresolver.acme.tlschallenge=true
       - --certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json
+      - --providers.docker.network=summarybuddy
     ports:
       - target: 443
         published: 443
@@ -42,6 +43,7 @@ services:
       - "traefik.http.routers.dashboard.service=api@internal"
       - "traefik.http.routers.dashboard.middlewares=auth"
       - "traefik.http.middlewares.auth.basicauth.users=test:$$apr1$$H6uskkkW$$IgXLP6ewTrSuBkTrqE8wj/,test2:$$apr1$$d9hr9HBB$$4HxwgUir3HP4EsggP/QNo0"
+      - traefik.docker.network=summarybuddy
     networks:
       - summarybuddy
   frontend:
@@ -59,6 +61,7 @@ services:
       - traefik.http.routers.frontend.entrypoints=websecure
       - traefik.http.routers.frontend.rule=Host(`hello.summary-buddy.p-e.kr`) && !PathPrefix(`/api`) && !PathPrefix(`/dashboard`)
       - traefik.http.routers.frontend.tls.certresolver=letsencrypt
+      - traefik.docker.network=summarybuddy
     networks:
       - summarybuddy
 
