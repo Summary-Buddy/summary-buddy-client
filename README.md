@@ -35,4 +35,9 @@
   </a>
 </p>
 
+| ![박윤선](https://avatars.githubusercontent.com/u/) | ![장나영](https://avatars.githubusercontent.com/u/112605030?v=4) | 
+| :-------------------------------------------------------------: | :-------------------------------------------------------------: |
+|             [박윤선](https://github.com/)              |              [장나영](https://github.com/skdod2453)               | 
+
+
 
