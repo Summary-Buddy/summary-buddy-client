@@ -1,9 +1,10 @@
-SummaryBuddy Client
+# SummaryBuddy Client
 안녕하세요! 회의 내용을 녹음하면, 회의 내용을 요약하고 회의록을 적어주는 AI 서비스입니다!
 ![image](https://github.com/user-attachments/assets/d97fb7f7-954a-4827-b2be-c105fd29f0fa)
 
 ## 🗓️기간
 ### 2024/09/23~2024/10/02 
+
 
 ## 🔍기능
 ### 회원가입 및 로그인
